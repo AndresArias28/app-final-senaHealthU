@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     private final AuthService authService;//para acceder a los metodos y a su ves al token
 
+//    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value="/login")
     public ResponseEntity<AuthResponse>  login(@RequestBody LoginRequest rq) {
         return ResponseEntity.ok(authService.login(rq));

@@ -12,7 +12,6 @@ import java.sql.Date;
 @Builder
 @Getter
 public class UsuarioDTO {
-
      private Integer idUsuario;
      private String nombreUsuario;
      private String emailUsuario;

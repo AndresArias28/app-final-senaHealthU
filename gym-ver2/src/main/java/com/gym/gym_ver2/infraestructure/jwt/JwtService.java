@@ -34,13 +34,11 @@ public class JwtService {
     }
 
     private Key getKey() {
-
         byte[] secretEncode = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(secretEncode);
     }
 
     public boolean validateToken(String token, UserDetails userDetails) {
-
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
@@ -62,7 +60,6 @@ public class JwtService {
     }
 
     public <T> T getClaim(String token, Function<Claims,T> claimsResolver) {
-
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }

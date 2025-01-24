@@ -26,13 +26,11 @@ public class AuthService {
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
             throw new IllegalArgumentException("La contraseña no puede estar vacía");
         }
-
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario() )
         );
 
         Usuario usuario = userRepository.findByEmailUsuario(rq.getEmailUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         String token = jwtService.createToken(new HashMap<>(),
                 new org.springframework.security.core.userdetails.User(
                         usuario.getEmailUsuario(),
@@ -40,14 +38,10 @@ public class AuthService {
                         new ArrayList<>()
                 )
         );
-
-        return AuthResponse.builder()
-                .token(token)
-                .build();
+        return AuthResponse.builder().token(token).build();
     }
 
     public AuthResponse register(RegisterRequest rq) {
-
         Usuario usuario = Usuario.builder()
                 .nombreUsuario(rq.getNombreUsuario())
                 .apellidoUsuario(rq.getApellidoUsuario())
@@ -62,11 +56,11 @@ public class AuthService {
                 .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()))
                 .idRol(Rol.builder().idRol(2).build())
                 .build();
-
         userRepository.save(usuario);
 
         return AuthResponse.builder()
                 .token(jwtService.createToken(usuario))
                 .build();
     }
+
 }
