@@ -27,18 +27,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+    // Metodo que se ejecuta en cada peticion
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //obtener token
         final String token = getTokenFromRequest(request);
         final String userEmail;
 
+        //validar si el token es nulo
         if(token == null){
             filterChain.doFilter(request, response);
             return;
         }
 
-        userEmail = jwtService.extractUsername(token);//extraer el correo del token
+        //extraer el correo del token
+        userEmail = jwtService.extractUsername(token);
 
         //vallidar token y correo
         if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null){
@@ -58,7 +61,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String getTokenFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader(HttpHeaders.AUTHORIZATION);//obtener el item de autenticacion
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
-            return bearerToken.substring(7);//el token se encuntra despues de la palabra Bearer
+            return bearerToken.substring(7);//el token se encuentra despues de la palabra Bearer
         }
         return null;
     }

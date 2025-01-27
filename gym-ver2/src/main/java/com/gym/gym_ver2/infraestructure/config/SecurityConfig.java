@@ -29,7 +29,7 @@ public class SecurityConfig  { //obtener la cadena de filtros
     private final AuthenticationProvider authenticationProvider;
     private final CustomUserDetailsService userDetailsService;
 
-    //configurar filtro de seguridad
+    //configurar la cadena de filtros, se encarga de la seguridad
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         try {
@@ -56,6 +56,7 @@ public class SecurityConfig  { //obtener la cadena de filtros
         }
     }
 
+    // configurar cors para permitir peticiones de angular
     @Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
@@ -70,9 +71,9 @@ public class SecurityConfig  { //obtener la cadena de filtros
         };
     }
 
+    // Configurar el AuthenticationManager para que use el UserDetailsService y el PasswordEncoder
     @Bean
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
-
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userDetailsService)
                 .passwordEncoder(passwordEncoder()) // Configura el PasswordEncoder
@@ -80,6 +81,7 @@ public class SecurityConfig  { //obtener la cadena de filtros
                 .build();
     }
 
+    // Configurar el PasswordEncoder para encriptar las contraseñas
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

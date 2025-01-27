@@ -23,14 +23,17 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest rq) {
 
+        // Validar que el email y la contraseña no estén vacíos
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
             throw new IllegalArgumentException("La contraseña no puede estar vacía");
         }
+        // // Validar que el usuario y la contraseña sean correctos
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario() )
         );
-
+        // recuperar usuario  segun la informacion del request
         Usuario usuario = userRepository.findByEmailUsuario(rq.getEmailUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        //crear token con el usuario
         String token = jwtService.createToken(new HashMap<>(),
                 new org.springframework.security.core.userdetails.User(
                         usuario.getEmailUsuario(),
@@ -38,10 +41,13 @@ public class AuthService {
                         new ArrayList<>()
                 )
         );
+        //crear la respuesta con el token
         return AuthResponse.builder().token(token).build();
+
     }
 
     public AuthResponse register(RegisterRequest rq) {
+        // mediante el patron builder se crea un usuario con la informacion del request
         Usuario usuario = Usuario.builder()
                 .nombreUsuario(rq.getNombreUsuario())
                 .apellidoUsuario(rq.getApellidoUsuario())
@@ -56,8 +62,9 @@ public class AuthService {
                 .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()))
                 .idRol(Rol.builder().idRol(2).build())
                 .build();
+        //guardar el usuario en la base de datos
         userRepository.save(usuario);
-
+        //crear token con el usuario creado y retornar la respuesta
         return AuthResponse.builder()
                 .token(jwtService.createToken(usuario))
                 .build();

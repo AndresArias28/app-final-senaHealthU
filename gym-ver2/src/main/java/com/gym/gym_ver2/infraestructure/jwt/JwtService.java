@@ -13,6 +13,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+//para que sirve el userdetailsService?
+//UserDetailsService es una interfaz de Spring Security que se utiliza para recuperar los detalles del usuario.
+//Es una interfaz que carga los datos específicos del usuario.
+
+//servicio que se encarga de la creacion y validacion de los tokens
 @Service
 public class JwtService {
 
@@ -22,9 +27,9 @@ public class JwtService {
         return createToken(new HashMap<>(), usuario);
     }
 
+    // Crear un token con información adicional
     public String createToken(Map<String, Object> extraClaims, UserDetails user) {
-
-        return Jwts.builder()
+        return Jwts.builder()// Construir el token
                 .setClaims(extraClaims) // Información adicional
                 .setSubject(user.getUsername()) // Usar el correo como sujeto (identificador único)
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
@@ -33,11 +38,13 @@ public class JwtService {
                 .compact(); // Generar el token
     }
 
+    // Obtener la clave secreta en formato Key
     private Key getKey() {
         byte[] secretEncode = Decoders.BASE64.decode(SECRET_KEY);
         return Keys.hmacShaKeyFor(secretEncode);
     }
 
+    // Validar el token con el usuario y la información adicional
     public boolean validateToken(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));

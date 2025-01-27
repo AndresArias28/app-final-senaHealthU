@@ -2,13 +2,12 @@ package com.gym.gym_ver2.infraestructure.config;
 
 import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.userdetails.*;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 
+// Clase que implementa la interfaz UserDetailsService de Spring Security
+// para cargar un usuario por su email y devolver un objeto UserDetails
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
@@ -18,6 +17,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository1;
     }
 
+    // Metodo que carga un usuario por su email y devuelve un objeto UserDetails
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         Usuario usuario = userRepository.findByEmailUsuario(email)
