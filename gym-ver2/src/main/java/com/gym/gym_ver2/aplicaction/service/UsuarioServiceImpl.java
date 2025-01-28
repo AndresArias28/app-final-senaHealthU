@@ -16,12 +16,12 @@ import java.util.Optional;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
-    private final RolRepository rolRepository;
+   // private final RolRepository rolRepository;
 
     @Autowired
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, RolRepository rolRepository) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
-        this.rolRepository = rolRepository;
+        //this.rolRepository = rolRepository;
     }
 
     @Override
@@ -43,12 +43,12 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.save(usuario);
     }
 
-    public Usuario crearUsuarioConRolDefecto(Usuario usuario) {
-        Rol rolPorDefecto = rolRepository.findById(2)
-                .orElseThrow(() -> new IllegalArgumentException("El rol con ID 2 no existe"));
-        usuario.setIdRol(rolPorDefecto);
-        return usuarioRepository.save(usuario);
-    }
+//    public Usuario crearUsuarioConRolDefecto(Usuario usuario) {
+//        Rol rolPorDefecto = rolRepository.findById(2)
+//                .orElseThrow(() -> new IllegalArgumentException("El rol con ID 2 no existe"));
+//        usuario.setIdRol(rolPorDefecto);
+//        return usuarioRepository.save(usuario);
+//    }
 
     @Override
     public UsuarioDTO getUser(Integer idUsuario) {
@@ -83,5 +83,4 @@ public class UsuarioServiceImpl implements UsuarioService {
         );
         return new UserResponse("Usuario actualizado correctamente");
     }
-
 }

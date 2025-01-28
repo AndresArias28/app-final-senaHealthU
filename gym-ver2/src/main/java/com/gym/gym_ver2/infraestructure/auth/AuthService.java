@@ -2,11 +2,15 @@ package com.gym.gym_ver2.infraestructure.auth;
 
 import com.gym.gym_ver2.domain.model.entity.Rol;
 import com.gym.gym_ver2.domain.model.entity.Usuario;
+import com.gym.gym_ver2.domain.model.pojos.AdminRegisterRequest;
 import com.gym.gym_ver2.infraestructure.jwt.JwtService;
 import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
@@ -22,28 +26,28 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse login(LoginRequest rq) {
-
         // Validar que el email y la contraseña no estén vacíos
+        if (rq.getEmailUsuario() == null || rq.getEmailUsuario().isEmpty()) {
+            throw new IllegalArgumentException("El email no puede estar vacío");
+        }
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
             throw new IllegalArgumentException("La contraseña no puede estar vacía");
         }
         // // Validar que el usuario y la contraseña sean correctos
-        authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario() )
         );
-        // recuperar usuario  segun la informacion del request
-        Usuario usuario = userRepository.findByEmailUsuario(rq.getEmailUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        // recuperar usuario según la información del request
+        // Recuperar el objeto UserDetails del usuario autenticado
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+
         //crear token con el usuario
-        String token = jwtService.createToken(new HashMap<>(),
-                new org.springframework.security.core.userdetails.User(
-                        usuario.getEmailUsuario(),
-                        usuario.getContrasenaUsuario(),
-                        new ArrayList<>()
-                )
+        String token = jwtService.generateToken(
+                new HashMap<>(),
+                userDetails
         );
         //crear la respuesta con el token
         return AuthResponse.builder().token(token).build();
-
     }
 
     public AuthResponse register(RegisterRequest rq) {
@@ -59,8 +63,8 @@ public class AuthService {
                 .fechaNacimiento( rq.getFechaNacimiento())
                 .horasRecompensas(rq.getHorasRecompensas())
                 .numeroFicha(rq.getNumeroFicha())
-                .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()))
-                .idRol(Rol.builder().idRol(2).build())
+                .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()) )
+                .idRol(Rol.builder().idRol(3).build())//po defecto se asigna el rol de usuario
                 .build();
         //guardar el usuario en la base de datos
         userRepository.save(usuario);
@@ -70,4 +74,21 @@ public class AuthService {
                 .build();
     }
 
+    public Usuario getUsuarioActual( String email) {
+        return userRepository.findByEmailUsuario(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    @PreAuthorize("hasRole('Superusuario')")
+    public String registerAdmin(AdminRegisterRequest rq) {
+        Usuario usuario = Usuario.builder()
+                .nombreUsuario(rq.getNombreUsuario())
+                .apellidoUsuario(rq.getApellidoUsuario())
+                .emailUsuario(rq.getEmailUsuario())
+                .cedulaUsuario(rq.getCedulaUsuario())
+                .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()) )
+                .idRol(Rol.builder().idRol(2).build())//rol de administrador
+                .build();
+        userRepository.save(usuario);
+        return "Administrador creado con éxito";
+    }
 }

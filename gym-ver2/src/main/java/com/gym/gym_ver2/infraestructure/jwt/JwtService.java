@@ -5,13 +5,16 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 //para que sirve el userdetailsService?
 //UserDetailsService es una interfaz de Spring Security que se utiliza para recuperar los detalles del usuario.
@@ -19,23 +22,32 @@ import java.util.function.Function;
 
 //servicio que se encarga de la creacion y validacion de los tokens
 @Service
-public class JwtService {
+public class    JwtService {
 
     private static final String SECRET_KEY="9083889768768768768768768768768768768768768768655645454573";
 
     public String createToken(UserDetails usuario) {
-        return createToken(new HashMap<>(), usuario);
+        return generateToken(new HashMap<>(), usuario);
     }
 
     // Crear un token con información adicional
-    public String createToken(Map<String, Object> extraClaims, UserDetails user) {
-        return Jwts.builder()// Construir el token
-                .setClaims(extraClaims) // Información adicional
+    public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
+        // Obtén los roles del usuario
+        String roles = user.getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        System.out.println("Rol: " + roles);
+
+        return Jwts.builder()// Construir el token mediante la librería Jwts
+               // .setClaims(extraClaims) // Información adicional
                 .setSubject(user.getUsername()) // Usar el correo como sujeto (identificador único)
+                .claim("rol", roles) // Agregar los roles del usuario
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expira en 24 minutos
                 .signWith(getKey(), SignatureAlgorithm.HS256) // Firma con clave secreta
-                .compact(); // Generar el token
+                .compact(); // Generar el token de tipo String
     }
 
     // Obtener la clave secreta en formato Key
@@ -51,11 +63,21 @@ public class JwtService {
     }
 
     private boolean isTokenExpired(String token) {
-        return getClaim(token, Claims::getExpiration).before(new Date());
+        Date expiration = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+        return expiration.before(new Date());
     }
 
     public String extractUsername(String token) {
-        return getClaim(token, Claims::getSubject);
+        //return getClaim(token, Claims::getSubject);
+        return Jwts.parser()
+                .setSigningKey(SECRET_KEY) // Asegúrate de usar la misma clave
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     private Claims extractAllClaims(String token) {
@@ -70,4 +92,5 @@ public class JwtService {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
+
 }

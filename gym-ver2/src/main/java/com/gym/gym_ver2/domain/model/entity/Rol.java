@@ -20,7 +20,7 @@ public class Rol {
     @Column(name = "id_rol")
     private Integer idRol;
 
-    @Column(name = "nombre_rol")
+    @Column(name = "nombre_rol", nullable = false, unique = true)
     private String nombreRol;
 
     @OneToMany(fetch =FetchType.LAZY, mappedBy = "idRol" )

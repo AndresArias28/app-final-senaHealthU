@@ -16,4 +16,9 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Integer> {
     @Modifying()
     @Query("update Usuario u set u.nombreUsuario=:nombreUsuario, u.emailUsuario=:emailUsuario where u.idUsuario = :idUsuario")
     void updateUser(@Param("idUsuario") Integer idUsuario, @Param("nombreUsuario") String nombreUsuario, @Param("emailUsuario") String emailUsuario);
+
+//    @Transactional
+//    @Modifying()
+//    @Query("SELECT u FROM Usuario u JOIN FETCH u.id_rol WHERE u.nombreUsuario = :nombreUsuario")
+//    Optional<Usuario> findByUsernameWithRoles(@Param("nombreUsuario") String nombreUsuario);
 }

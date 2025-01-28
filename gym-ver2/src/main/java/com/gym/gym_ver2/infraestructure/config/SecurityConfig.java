@@ -9,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
@@ -22,33 +23,38 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration//configurar objetos de spring
 @EnableWebSecurity
+@EnableGlobalMethodSecurity(prePostEnabled = true) // Habilita @PreAuthorize y @PostAuthor
 @RequiredArgsConstructor//inyectar dependencias
-public class SecurityConfig  { //obtener la cadena de filtros
+public class SecurityConfig { //obtener la cadena de filtros
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final AuthenticationProvider authenticationProvider;
     private final CustomUserDetailsService userDetailsService;
 
-    //configurar la cadena de filtros, se encarga de la seguridad
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) {
+    @Bean //configurar la cadena de filtros, se encarga de la seguridad
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         try {
             return http
-                    .csrf(csrf -> csrf.disable())
-                    .authorizeHttpRequests(autgRequest ->
-                            autgRequest
+                    .csrf(csrf -> csrf.disable())//deshabilitar la proteccion csrf, no es necesario con JWT
+                    //configurar las rutas que necesitan autenticacion
+                    .authorizeHttpRequests(authRequest ->
+                            authRequest
                                     .requestMatchers(HttpMethod.GET).permitAll()
                                     .requestMatchers(HttpMethod.POST).permitAll()
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                     .requestMatchers("/auth/**").permitAll()
-                                    .anyRequest()
-                                    .authenticated()
+                                    .requestMatchers("/super/**").hasRole("Superusuario")
+                                    .requestMatchers("/usuario/**").hasRole("Usuario")
+                                    .requestMatchers("/admin/**").hasRole("Administrador")
+                                    .anyRequest().authenticated()
                     )
+                    //configurar la sesion para que sea sin estado
                     .sessionManagement(sessionManagement ->
                             sessionManagement
                             .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authenticationProvider(authenticationProvider)
+                    .authenticationProvider(authenticationProvider)//configurar el proveedor de autenticacion
+                    //configurar el filtro de autenticacion JWT antes del filtro estándar de Spring Security.
                     .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                     .build();
         } catch (Exception e) {
@@ -56,8 +62,7 @@ public class SecurityConfig  { //obtener la cadena de filtros
         }
     }
 
-    // configurar cors para permitir peticiones de angular
-    @Bean
+    @Bean // configurar cors para permitir peticiones de angular
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurer() {
             @Override
@@ -71,8 +76,7 @@ public class SecurityConfig  { //obtener la cadena de filtros
         };
     }
 
-    // Configurar el AuthenticationManager para que use el UserDetailsService y el PasswordEncoder
-    @Bean
+    @Bean // Configurar el AuthenticationManager para que use el UserDetailsService y el PasswordEncoder
     public AuthenticationManager authManager(HttpSecurity http) throws Exception {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(userDetailsService)
@@ -81,7 +85,6 @@ public class SecurityConfig  { //obtener la cadena de filtros
                 .build();
     }
 
-    // Configurar el PasswordEncoder para encriptar las contraseñas
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

@@ -73,12 +73,11 @@ public class Usuario implements UserDetails {
     @Column(name = "nivel_actual_usuario")
     private Integer nivelActualUsuario;
 
-    @Column(name = "codigoqr_admin")
-    private String qrAdmin;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority((idRol.getNombreRol())));
+        return idRol != null
+                ? List.of(new SimpleGrantedAuthority("ROLE_"+idRol.getNombreRol())) // Convierte el rol único en una lista con un solo elemento
+                : List.of(); // Si no hay rol, devuelve una lista vacía
     }
 
     @Override

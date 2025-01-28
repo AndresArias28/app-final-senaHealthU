@@ -12,7 +12,7 @@ public interface UsuarioService {
 
     void createUser(Usuario usuario);
 
-    Usuario crearUsuarioConRolDefecto(Usuario usuario);
+   // Usuario crearUsuarioConRolDefecto(Usuario usuario);
 
     UsuarioDTO getUser(Integer idUsuario);
 
