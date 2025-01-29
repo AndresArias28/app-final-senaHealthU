@@ -32,7 +32,7 @@ public class CustomUserDetailsService implements UserDetailsService {
                 });
         System.out.println("Usuario encontrado: " + usuario.getEmailUsuario());
 
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + usuario.getIdRol().getNombreRol());
+        GrantedAuthority authority = new SimpleGrantedAuthority( usuario.getIdRol().getNombreRol());
 
         // Collection<GrantedAuthority> authorities = usuario.getIdRol().getNombreRol().to
         return new org.springframework.security.core.userdetails.User(// Devuelve un objeto UserDetails

@@ -6,14 +6,11 @@ import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
 import com.gym.gym_ver2.infraestructure.auth.AuthService;
 import com.gym.gym_ver2.infraestructure.auth.LoginRequest;
 import com.gym.gym_ver2.infraestructure.auth.RegisterRequest;
-import com.gym.gym_ver2.infraestructure.config.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,17 +18,12 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;//para acceder a los metodos y a su ves al token
+    private final AuthService authService;//acceder a los metodos y a su vez al token
     private final UserDetailsService userDetailsService;
 
-//    @CrossOrigin(origins = "http://localhost:4200")
+    @CrossOrigin(origins = "http://localhost:4200")
     @PostMapping(value="/login")
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest rq) {
-//        // Validar las credenciales
-//        UserDetails userDetails = userDetailsService.loadUserByUsername(rq.getEmailUsuario());
-//        if (!PasswordEncoder.matches(rq.getPassword(), userDetails.getPassword())) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//        }
         return ResponseEntity.ok(authService.login(rq));
     }
 
@@ -57,5 +49,6 @@ public class AuthController {
 //        }
         return ResponseEntity.ok(authService.registerAdmin(request));
     }
+
 
 }

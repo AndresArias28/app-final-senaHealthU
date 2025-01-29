@@ -8,11 +8,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfiguration;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -45,7 +43,7 @@ public class SecurityConfig { //obtener la cadena de filtros
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                     .requestMatchers("/auth/**").permitAll()
                                     .requestMatchers("/super/**").hasRole("Superusuario")
-                                    .requestMatchers("/usuario/**").hasRole("Usuario")
+                                    .requestMatchers("/user/**").hasRole("Usuario")
                                     .requestMatchers("/admin/**").hasRole("Administrador")
                                     .anyRequest().authenticated()
                     )

@@ -33,21 +33,19 @@ public class AuthService {
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
             throw new IllegalArgumentException("La contraseña no puede estar vacía");
         }
-        // // Validar que el usuario y la contraseña sean correctos
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario() )
-        );
-        // recuperar usuario según la información del request
-        // Recuperar el objeto UserDetails del usuario autenticado
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-
-        //crear token con el usuario
-        String token = jwtService.generateToken(
-                new HashMap<>(),
-                userDetails
-        );
-        //crear la respuesta con el token
-        return AuthResponse.builder().token(token).build();
+        try{
+            Authentication authentication = authenticationManager.authenticate(// autentica que el usuario y la contraseña sean correctos
+                    new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario() )
+            );
+            UserDetails userDetails = userRepository.findByEmailUsuario(rq.getEmailUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                   // (UserDetails) authentication.getPrincipal(); // Recuperar el objeto UserDetails del usuario autenticado
+            //crear token con el usuario
+            String token = jwtService.generateToken(new HashMap<>(), userDetails);
+            //crear la respuesta con el token
+            return AuthResponse.builder().token(token).build();
+    }catch (Exception e) {
+            throw new RuntimeException("Usuario o contraseña incorrectos");
+        }
     }
 
     public AuthResponse register(RegisterRequest rq) {

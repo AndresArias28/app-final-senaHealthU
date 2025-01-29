@@ -1,8 +1,6 @@
 package com.gym.gym_ver2.infraestructure.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.GrantedAuthority;
@@ -11,7 +9,6 @@ import org.springframework.stereotype.Service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,9 +19,12 @@ import java.util.stream.Collectors;
 
 //servicio que se encarga de la creacion y validacion de los tokens
 @Service
-public class    JwtService {
+public class JwtService {
+    private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";
 
-    private static final String SECRET_KEY="9083889768768768768768768768768768768768768768655645454573";
+    private JwtParser getParser() {
+        return Jwts.parserBuilder().setSigningKey(getKey()).build();
+    }
 
     public String createToken(UserDetails usuario) {
         return generateToken(new HashMap<>(), usuario);
@@ -41,7 +41,7 @@ public class    JwtService {
         System.out.println("Rol: " + roles);
 
         return Jwts.builder()// Construir el token mediante la librería Jwts
-               // .setClaims(extraClaims) // Información adicional
+                //.setClaims(extraClaims) // Información adicional
                 .setSubject(user.getUsername()) // Usar el correo como sujeto (identificador único)
                 .claim("rol", roles) // Agregar los roles del usuario
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
@@ -51,46 +51,80 @@ public class    JwtService {
     }
 
     // Obtener la clave secreta en formato Key
-    private Key getKey() {
-        byte[] secretEncode = Decoders.BASE64.decode(SECRET_KEY);
-        return Keys.hmacShaKeyFor(secretEncode);
+    public  Key getKey() {
+        byte[] secretEncode = Decoders.BASE64.decode(SECRET_KEY); // Decodificar la clave secreta en base64
+        if (secretEncode.length < 32) {
+            throw new IllegalArgumentException("La clave secreta debe tener al menos 32 bytes (256 bits) después de decodificarla.");
+        }
+        return Keys.hmacShaKeyFor(secretEncode);//devuelve una clave secreta
     }
 
-    // Validar el token con el usuario y la información adicional
-    public boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    public <T> T getClaim(String token, Function<Claims,T> claimsResolver)
+    {
+        final Claims claims=getAllClaims(token);
+        return claimsResolver.apply(claims);
     }
 
-    private boolean isTokenExpired(String token) {
-        Date expiration = Jwts.parser()
-                .setSigningKey(SECRET_KEY)
-                .parseClaimsJws(token)
-                .getBody()
-                .getExpiration();
-        return expiration.before(new Date());
-    }
-
-    public String extractUsername(String token) {
-        //return getClaim(token, Claims::getSubject);
-        return Jwts.parser()
-                .setSigningKey(SECRET_KEY) // Asegúrate de usar la misma clave
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject();
-    }
-
-    private Claims extractAllClaims(String token) {
-        return Jwts.parserBuilder()
+    private Claims getAllClaims(String token)
+    {
+        return Jwts
+                .parserBuilder()
                 .setSigningKey(getKey())
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
     }
 
-    public <T> T getClaim(String token, Function<Claims,T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+//    public boolean isTokenValid(String token, UserDetails userDetails) {
+//        final String username=getUsernameFromToken(token);
+//        return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
+//    }
+//    public String getUsernameFromToken(String token) {
+//        return getClaim(token, Claims::getSubject);
+//    }
+
+    // Validar el token con el usuario y la información adicional
+    public boolean validateToken(String token, UserDetails userDetails) {
+        try {
+            final String username = extractUsername(token);
+            return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+        } catch (Exception e) {
+            System.err.println("Error validando el token: " + e.getMessage());
+            return false; // El token no es válido
+        }
     }
+
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    private boolean isTokenExpired(String token) {
+        try {
+            Claims claims = getParser().parseClaimsJws(token).getBody();
+            Date expiration = claims.getExpiration();
+            return expiration.before(new Date());
+        } catch (ExpiredJwtException e) {
+            return true; // Si el token ya está expirado
+        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+            throw new IllegalArgumentException("El token JWT no es válido.", e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error al verificar la expiración del token.", e);
+        }
+        //return getExpiration(token).before(new Date());
+    }
+//    private Date getExpiration(String token)
+//    {
+//        return getClaim(token, Claims::getExpiration);
+//    }
+
+//    private Claims extractAllClaims(String token) {
+//        return getParser().parseClaimsJws(token).getBody();
+//    }
+
 
 }

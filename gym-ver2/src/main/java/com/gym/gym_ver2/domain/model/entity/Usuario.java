@@ -32,7 +32,7 @@ public class Usuario implements UserDetails {
     private Integer idUsuario;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
    // @JsonBackReference
     private Rol idRol;

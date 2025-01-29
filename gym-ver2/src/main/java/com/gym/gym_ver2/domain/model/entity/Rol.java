@@ -23,7 +23,7 @@ public class Rol {
     @Column(name = "nombre_rol", nullable = false, unique = true)
     private String nombreRol;
 
-    @OneToMany(fetch =FetchType.LAZY, mappedBy = "idRol" )
+    @OneToMany(fetch =FetchType.EAGER, mappedBy = "idRol" )
    // @JsonManagedReference
     private List<Usuario> usuarios;
 
