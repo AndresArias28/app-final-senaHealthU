@@ -20,7 +20,6 @@ public class JwtService {
     public String createToken(UserDetails usuario) {
         return generateToken(new HashMap<>(), usuario);
     }
-
     // Crear un token con información adicional
     public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
         // Obtén los roles del usuario
@@ -40,7 +39,6 @@ public class JwtService {
                 .signWith(getKey(), SignatureAlgorithm.HS256) // Firma con clave secreta
                 .compact(); // Generar el token de tipo String
     }
-
     // Obtener la clave secreta en formato Key
     public  Key getKey() {
         byte[] secretEncode = Decoders.BASE64.decode(SECRET_KEY); // Decodificar la clave secreta en base64
@@ -49,7 +47,6 @@ public class JwtService {
         }
         return Keys.hmacShaKeyFor(secretEncode);//devuelve una clave secreta
     }
-
     // Validar el token con el usuario y la información adicional
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
@@ -70,7 +67,6 @@ public class JwtService {
                 .getSubject();
     }
 
-
     private JwtParser getParser() {
         return Jwts.parserBuilder().setSigningKey(getKey()).build();
     }
@@ -89,6 +85,7 @@ public class JwtService {
         }
         //return getExpiration(token).before(new Date());
     }
+
 //    private Date getExpiration(String token)
 //    {
 //        return getClaim(token, Claims::getExpiration);

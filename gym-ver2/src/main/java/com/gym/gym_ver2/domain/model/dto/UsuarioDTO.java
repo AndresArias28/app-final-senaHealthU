@@ -1,10 +1,6 @@
-package com.gym.gym_ver2.domain.model.pojos;
+package com.gym.gym_ver2.domain.model.dto;
 
-import com.gym.gym_ver2.domain.model.entity.Rol;
-import jakarta.persistence.Column;
 import lombok.*;
-
-import java.sql.Date;
 
 @Data
 @AllArgsConstructor

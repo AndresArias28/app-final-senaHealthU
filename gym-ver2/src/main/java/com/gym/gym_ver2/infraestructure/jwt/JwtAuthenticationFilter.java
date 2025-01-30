@@ -27,16 +27,16 @@ import org.springframework.http.HttpHeaders;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    //atributos
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
-
+    //constructor
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
     }
 
-    // Metodo que se ejecuta en cada peticion
-    @Override
+    @Override// se ejecuta en cada peticion
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         //obtener token
         final String token = getTokenFromRequest(request);

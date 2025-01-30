@@ -2,7 +2,7 @@ package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.UsuarioService;
 import com.gym.gym_ver2.domain.model.pojos.UserResponse;
-import com.gym.gym_ver2.domain.model.pojos.UsuarioDTO;
+import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +21,8 @@ public class UsuarioControler {
         this.userService = userService;
     }
 
+    @CrossOrigin(origins = "http://localhost:4200")
+    @GetMapping("/obtenereUsarios")
     public ResponseEntity<List<UsuarioDTO>> obtenerUsuarios() {
         List<UsuarioDTO> usuarios = userService.getUsers();
         return ResponseEntity.ok(usuarios);

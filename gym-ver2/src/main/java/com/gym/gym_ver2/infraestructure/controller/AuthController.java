@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final AuthService authService;//acceder a los metodos y a su vez al token
+    private final AuthService authService;//instancia para acceder a los metodos y a su vez al token
     private final UserDetailsService userDetailsService;
 
     @CrossOrigin(origins = "http://localhost:4200")
