@@ -10,21 +10,12 @@ import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
-//para que sirve el userdetailsService?
 //UserDetailsService es una interfaz de Spring Security que se utiliza para recuperar los detalles del usuario.
-//Es una interfaz que carga los datos específicos del usuario.
-
-//servicio que se encarga de la creacion y validacion de los tokens
-@Service
+@Service//Es una interfaz que carga los datos específicos del usuario. Servicio que se encarga de la creacion y validacion de los tokens
 public class JwtService {
     private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";
-
-    private JwtParser getParser() {
-        return Jwts.parserBuilder().setSigningKey(getKey()).build();
-    }
 
     public String createToken(UserDetails usuario) {
         return generateToken(new HashMap<>(), usuario);
@@ -59,30 +50,6 @@ public class JwtService {
         return Keys.hmacShaKeyFor(secretEncode);//devuelve una clave secreta
     }
 
-    public <T> T getClaim(String token, Function<Claims,T> claimsResolver)
-    {
-        final Claims claims=getAllClaims(token);
-        return claimsResolver.apply(claims);
-    }
-
-    private Claims getAllClaims(String token)
-    {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getKey())
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
-
-//    public boolean isTokenValid(String token, UserDetails userDetails) {
-//        final String username=getUsernameFromToken(token);
-//        return (username.equals(userDetails.getUsername())&& !isTokenExpired(token));
-//    }
-//    public String getUsernameFromToken(String token) {
-//        return getClaim(token, Claims::getSubject);
-//    }
-
     // Validar el token con el usuario y la información adicional
     public boolean validateToken(String token, UserDetails userDetails) {
         try {
@@ -103,6 +70,11 @@ public class JwtService {
                 .getSubject();
     }
 
+
+    private JwtParser getParser() {
+        return Jwts.parserBuilder().setSigningKey(getKey()).build();
+    }
+
     private boolean isTokenExpired(String token) {
         try {
             Claims claims = getParser().parseClaimsJws(token).getBody();
@@ -110,7 +82,7 @@ public class JwtService {
             return expiration.before(new Date());
         } catch (ExpiredJwtException e) {
             return true; // Si el token ya está expirado
-        } catch (SignatureException | MalformedJwtException | UnsupportedJwtException e) {
+        } catch ( MalformedJwtException | UnsupportedJwtException e) {
             throw new IllegalArgumentException("El token JWT no es válido.", e);
         } catch (Exception e) {
             throw new RuntimeException("Error al verificar la expiración del token.", e);

@@ -1,7 +1,6 @@
 package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.UsuarioService;
-import com.gym.gym_ver2.domain.model.entity.Usuario;
 import com.gym.gym_ver2.domain.model.pojos.UserResponse;
 import com.gym.gym_ver2.domain.model.pojos.UsuarioDTO;
 import org.springframework.beans.factory.annotation.Autowired;

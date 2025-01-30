@@ -9,11 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 @Service
@@ -34,7 +32,7 @@ public class AuthService {
             throw new IllegalArgumentException("La contraseña no puede estar vacía");
         }
         try{
-            Authentication authentication = authenticationManager.authenticate(// autentica que el usuario y la contraseña sean correctos
+            authenticationManager.authenticate(// autentica que el usuario y la contraseña sean correctos
                     new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario() )
             );
             UserDetails userDetails = userRepository.findByEmailUsuario(rq.getEmailUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -43,6 +41,7 @@ public class AuthService {
             String token = jwtService.generateToken(new HashMap<>(), userDetails);
             //crear la respuesta con el token
             return AuthResponse.builder().token(token).build();
+
     }catch (Exception e) {
             throw new RuntimeException("Usuario o contraseña incorrectos");
         }
