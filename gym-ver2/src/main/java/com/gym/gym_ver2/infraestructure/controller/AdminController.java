@@ -2,13 +2,14 @@ package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.aplicaction.service.AdminService;
 import com.gym.gym_ver2.domain.model.dto.AdminDTO;
+import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
+import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
+import com.gym.gym_ver2.infraestructure.auth.RegisterRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RequestMapping("/admin")
@@ -32,6 +33,20 @@ public class AdminController {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest rq) {
+        try{
+            if (rq == null) {
+                return ResponseEntity.badRequest().build();
+            }
+            return ResponseEntity.ok(adminService.registerAdmin(rq));
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+
     }
 
 }

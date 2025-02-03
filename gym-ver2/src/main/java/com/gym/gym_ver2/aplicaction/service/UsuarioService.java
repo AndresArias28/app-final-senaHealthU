@@ -11,8 +11,6 @@ public interface UsuarioService {
 
     void createUser(Usuario usuario);
 
-   // Usuario crearUsuarioConRolDefecto(Usuario usuario);
-
     UsuarioDTO getUser(Integer idUsuario);
 
     UserResponse actualizarUsuario(UsuarioDTO userRequest);

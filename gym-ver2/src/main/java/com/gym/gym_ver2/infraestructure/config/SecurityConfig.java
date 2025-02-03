@@ -12,6 +12,7 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -26,7 +27,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration//configurar objetos de spring
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true) // Habilita @PreAuthorize y @PostAuthor
+@EnableMethodSecurity
 @RequiredArgsConstructor//inyectar dependencias
 public class SecurityConfig { //obtener la cadena de filtros
 
@@ -48,9 +49,9 @@ public class SecurityConfig { //obtener la cadena de filtros
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                     .requestMatchers("/auth/**").permitAll()
-                                    .requestMatchers("/super/**").hasRole("Superusuario")
-                                    .requestMatchers("/user/**").hasRole("Usuario")
-                                    .requestMatchers("/admin/**").hasRole("Administrador")
+                                    .requestMatchers("/super/**").hasAuthority("Superusuario")
+                                    .requestMatchers("/user/**").hasAuthority("usuario")
+                                    .requestMatchers("/admin/**").hasAuthority("Superusuario")
                                     .anyRequest().authenticated()
                     )
                     //configurar la sesion para que sea sin estado

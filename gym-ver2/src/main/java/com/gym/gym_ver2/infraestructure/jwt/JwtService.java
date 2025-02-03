@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 //UserDetailsService es una interfaz de Spring Security que se utiliza para recuperar los detalles del usuario.
 @Service//Es una interfaz que carga los datos específicos del usuario. Servicio que se encarga de la creacion y validacion de los tokens
 public class JwtService {
-    private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";
+        private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";
 
     public String createToken(UserDetails usuario) {
         return generateToken(new HashMap<>(), usuario);
@@ -26,10 +26,9 @@ public class JwtService {
         String roles = user.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
+                .map(role -> role.replaceFirst("^ROLE_", "")) // Elimina el prefijo "ROLE_"
                 .collect(Collectors.joining(","));
-
         System.out.println("Rol: " + roles);
-
         return Jwts.builder()// Construir el token mediante la librería Jwts
                 //.setClaims(extraClaims) // Información adicional
                 .setSubject(user.getUsername()) // Usar el correo como sujeto (identificador único)

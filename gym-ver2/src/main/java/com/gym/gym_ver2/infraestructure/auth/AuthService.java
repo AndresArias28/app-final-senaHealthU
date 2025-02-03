@@ -63,29 +63,27 @@ public class AuthService {
                 .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()) )
                 .idRol(Rol.builder().idRol(3).build())//po defecto se asigna el rol de usuario
                 .build();
-        //guardar el usuario en la base de datos
-        userRepository.save(usuario);
+
+        userRepository.save(usuario);//guardar el usuario en la base de datos
         //crear token con el usuario creado y retornar la respuesta
-        return AuthResponse.builder()
-                .token(jwtService.createToken(usuario))
-                .build();
+        return AuthResponse.builder().token(jwtService.createToken(usuario)).build();
     }
 
     public Usuario getUsuarioActual( String email) {
         return userRepository.findByEmailUsuario(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
-    @PreAuthorize("hasRole('Superusuario')")
-    public String registerAdmin(AdminRegisterRequest rq) {
-        Usuario usuario = Usuario.builder()
-                .nombreUsuario(rq.getNombreUsuario())
-                .apellidoUsuario(rq.getApellidoUsuario())
-                .emailUsuario(rq.getEmailUsuario())
-                .cedulaUsuario(rq.getCedulaUsuario())
-                .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()) )
-                .idRol(Rol.builder().idRol(2).build())//rol de administrador
-                .build();
-        userRepository.save(usuario);
-        return "Administrador creado con éxito";
-    }
+//    @PreAuthorize("hasRole('ROLE_Superusuario')")
+//    public String registerAdmin(AdminRegisterRequest rq) {
+//        Usuario usuario = Usuario.builder()
+//                .nombreUsuario(rq.getNombreUsuario())
+//                .apellidoUsuario(rq.getApellidoUsuario())
+//                .emailUsuario(rq.getEmailUsuario())
+//                .cedulaUsuario(rq.getCedulaUsuario())
+//                .contrasenaUsuario( passwordEncoder.encode(rq.getContrasenaUsuario()) )
+//                .idRol(Rol.builder().idRol(2).build())//rol de administrador
+//                .build();
+//        userRepository.save(usuario);
+//        return "Administrador creado con éxito";
+//    }
 }
