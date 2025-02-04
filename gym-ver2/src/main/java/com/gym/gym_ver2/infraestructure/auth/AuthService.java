@@ -38,7 +38,9 @@ public class AuthService {
             UserDetails userDetails = userRepository.findByEmailUsuario(rq.getEmailUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
                    // (UserDetails) authentication.getPrincipal(); // Recuperar el objeto UserDetails del usuario autenticado
             //crear token con el usuario
-            String token = jwtService.generateToken(new HashMap<>(), userDetails);
+            HashMap<String, Object> aux = new HashMap<>();
+            aux.put("sub", rq.getEmailUsuario());
+            String token = jwtService.generateToken(aux, userDetails);
             //crear la respuesta con el token
             return AuthResponse.builder().token(token).build();
 

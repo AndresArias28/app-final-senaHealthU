@@ -13,12 +13,14 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -43,17 +45,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         //obtener token
         final String token = getTokenFromRequest(request);
+        System.out.println("Token recibido: " + token);
         final String userEmail;
         //validar si el token es nulo
         if (token == null) {
+            System.out.println("Token no encontrado en la solicitud");
             filterChain.doFilter(request, response);
             return;
         }
         //extraer el correo del token
         userEmail = jwtService.extractUsername(token);
-        //vallidar token y correo
+        System.out.println("Correo del token: " + userEmail);
+        //validar token y correo
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+            System.out.println("UserDetails cargado: " + userDetails.getUsername());
             try {
                 if (jwtService.validateToken(token, userDetails)) {
                     Claims claims = Jwts.parserBuilder()// Construir el token mediante la librería Jwts
@@ -63,20 +69,45 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .getBody();
 
                     String roles = claims.get("rol", String.class); // Obtener roles como String
-                    // Convertir los roles en una lista de autoridades
-                    List<GrantedAuthority> authorities = null;
-                    if (roles != null) {
-                        authorities = Arrays.stream(roles.split(","))
-                                .map( SimpleGrantedAuthority::new)
-                                .collect(Collectors.toList());
-                    }
                     System.out.println("Roles del token: " + roles);
-                    System.out.println("Autoridades generadas: " + authorities);
-                    // Configurar la autenticación en el contexto de seguridad
+                    // Convertir roles en una lista de autoridades
+                    List<GrantedAuthority> authorities = (roles != null) ?
+                            Collections.singletonList(new SimpleGrantedAuthority(roles)) : List.of();
+//                            Arrays.stream(roles.split(","))
+//                                    .map(SimpleGrantedAuthority::new)
+//                                    .collect(Collectors.toList()) : List.of();
+
+                    System.out.println("Roles del token fitro: " + roles);
+                    System.out.println("Autoridades generadas filtro: " + authorities);
+// Validar que el usuario tenga el rol ROLE_Administrador si accede a rutas específicas
+                    if (request.getRequestURI().startsWith("/user/")) {
+                        boolean esAdministrador = authorities.stream()
+                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Administrador"));
+
+                        if (!esAdministrador) {
+                            System.err.println("Acceso denegado: Se requiere rol de Administrador");
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado: Se requiere rol de Administrador");
+                            return;
+                        }
+                    }
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails, null, authorities);
-
                     SecurityContextHolder.getContext().setAuthentication(authToken);
+                    System.out.println("Autenticación establecida en el SecurityContextHolder");
+                    // Validar que el usuario tenga el rol "Superusuario"**
+//                    boolean esSuperusuario = authorities.stream()
+//                            .anyMatch(auth -> auth.getAuthority().equals("ROLE_Superusuario"));
+//
+//                    if (!esSuperusuario) {
+//                        System.err.println("Acceso denegado: No es Superusuario");
+//                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado: Se requiere rol de Superusuario");
+//                        return;
+//                    }
+                    // Configurar la autenticación en el contexto de seguridad
+
+                   // authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+
                 }
             } catch (io.jsonwebtoken.ExpiredJwtException e) {
                 System.err.println("El token ha expirado: " + e.getMessage());

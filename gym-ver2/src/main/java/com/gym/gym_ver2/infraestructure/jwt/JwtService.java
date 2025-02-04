@@ -22,16 +22,16 @@ public class JwtService {
     }
     // Crear un token con información adicional
     public String generateToken(Map<String, Object> extraClaims, UserDetails user) {
-        // Obtén los roles del usuario
-        String roles = user.getAuthorities()
-                .stream()
+
+        String roles = user.getAuthorities() // Obtén los roles del usuario
+                .stream()//convierte la lista en un stream
                 .map(GrantedAuthority::getAuthority)
-                .map(role -> role.replaceFirst("^ROLE_", "")) // Elimina el prefijo "ROLE_"
                 .collect(Collectors.joining(","));
         System.out.println("Rol: " + roles);
+
         return Jwts.builder()// Construir el token mediante la librería Jwts
-                //.setClaims(extraClaims) // Información adicional
-                .setSubject(user.getUsername()) // Usar el correo como sujeto (identificador único)
+                .setClaims(extraClaims) // Información adicional, correo
+                //.setSubject(user.getUsername()) // Usar el correo como sujeto (identificador único)
                 .claim("rol", roles) // Agregar los roles del usuario
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expira en 24 minutos

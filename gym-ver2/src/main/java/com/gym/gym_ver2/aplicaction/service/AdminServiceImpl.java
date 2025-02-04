@@ -41,7 +41,6 @@ public class AdminServiceImpl implements  AdminService {
                 .toList();
     }
 
-    @PreAuthorize("hasAuthority('Superusuario')")
     @Override
     public AuthResponse registerAdmin(RegisterAdminRequest rq) {
         System.out.println("Accediendo al método protegido.");

@@ -44,15 +44,14 @@ public class SecurityConfig { //obtener la cadena de filtros
                     //configurar las rutas que necesitan autenticacion
                     .authorizeHttpRequests(authRequest ->
                             authRequest
-                                    .requestMatchers(HttpMethod.GET).permitAll()
-                                    .requestMatchers(HttpMethod.POST).permitAll()
+                                   // .requestMatchers(HttpMethod.GET, "/admin/obtenerAdmins").hasAuthority("ROLE_Administrador")
+                                    //.requestMatchers(HttpMethod.POST,  "/admin/**").authenticated()
+                                    .requestMatchers("/auth/**").permitAll()
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                                    .requestMatchers("/auth/**").permitAll()
-                                    .requestMatchers("/super/**").hasAuthority("Superusuario")
-                                    .requestMatchers("/user/**").hasAuthority("usuario")
-                                    .requestMatchers("/admin/**").hasAuthority("Superusuario")
+                                    .requestMatchers("/user/obtenereUsarios").hasAuthority("ROLE_Administrador")
                                     .anyRequest().authenticated()
+
                     )
                     //configurar la sesion para que sea sin estado
                     .sessionManagement(sessionManagement ->

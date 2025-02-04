@@ -24,13 +24,9 @@ public class CustomUserDetailsService implements UserDetailsService {
                 .orElseThrow(() ->   new UsernameNotFoundException("Usuario no encontrado con email: " + email));
         System.out.println("Usuario encontrado: " + usuario.getEmailUsuario());
 
-        String nombreRol = usuario.getIdRol() != null ? usuario.getIdRol().getNombreRol() : "DEFAULT";
-
-        System.out.println("Roles obtenidos del token: " + nombreRol);
 
         GrantedAuthority authority = new SimpleGrantedAuthority( usuario.getIdRol().getNombreRol());
-        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority(usuario.getIdRol().getNombreRol()) // Sin prefijo "ROLE_"
-        );
+        List<GrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_"+usuario.getIdRol().getNombreRol()));
 
         System.out.println("Autoridades cargadas: " + authorities);
         System.out.println("Cargando usuario: " + email);
