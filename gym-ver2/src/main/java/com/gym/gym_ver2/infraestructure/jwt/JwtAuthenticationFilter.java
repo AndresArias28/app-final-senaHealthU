@@ -33,6 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     //atributos
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+
     //constructor
     public JwtAuthenticationFilter(JwtService jwtService, UserDetailsService userDetailsService) {
         this.jwtService = jwtService;
@@ -41,26 +42,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override// se ejecuta en cada peticion
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        System.out.println("Ejecutando filtro JWT");
 
-        //obtener token
-        final String token = getTokenFromRequest(request);
-        System.out.println("Token recibido: " + token);
+        final String token = getTokenFromRequest(request);//obtener token
         final String userEmail;
-        //validar si el token es nulo
-        if (token == null) {
+
+        if (token == null) { //validar si el token es nulo
             System.out.println("Token no encontrado en la solicitud");
             filterChain.doFilter(request, response);
             return;
         }
-        //extraer el correo del token
-        userEmail = jwtService.extractUsername(token);
-        System.out.println("Correo del token: " + userEmail);
-        //validar token y correo
-        if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
-            System.out.println("UserDetails cargado: " + userDetails.getUsername());
-            try {
+        try {
+            userEmail = jwtService.extractUsername(token); //extraer el correo del token
+            System.out.println("Correo del token: " + userEmail);
+            //validar token y correo
+            if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
+                System.out.println("UserDetails cargado: " + userDetails.getUsername());
+
                 if (jwtService.validateToken(token, userDetails)) {
                     Claims claims = Jwts.parserBuilder()// Construir el token mediante la librería Jwts
                             .setSigningKey(jwtService.getKey()) // Clave secreta usada para firmar
@@ -69,23 +67,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             .getBody();
 
                     String roles = claims.get("rol", String.class); // Obtener roles como String
-                    System.out.println("Roles del token: " + roles);
                     // Convertir roles en una lista de autoridades
-                    List<GrantedAuthority> authorities = (roles != null) ?
-                            Collections.singletonList(new SimpleGrantedAuthority(roles)) : List.of();
-//                            Arrays.stream(roles.split(","))
-//                                    .map(SimpleGrantedAuthority::new)
-//                                    .collect(Collectors.toList()) : List.of();
-
+                    List<GrantedAuthority> authorities = (roles != null) ? Collections.singletonList(new SimpleGrantedAuthority(roles)) : List.of();
                     System.out.println("Roles del token fitro: " + roles);
                     System.out.println("Autoridades generadas filtro: " + authorities);
-// Validar que el usuario tenga el rol ROLE_Administrador si accede a rutas específicas
-                    if (request.getRequestURI().startsWith("/user/")) {
+                    // Validar que el usuario tenga el rol ROLE_Administrador si accede a rutas específicas
+                    if (request.getRequestURI().startsWith("/user/obtenereUsarios")) {
                         boolean esAdministrador = authorities.stream()
                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_Administrador"));
-
-                        if (!esAdministrador) {
-                            System.err.println("Acceso denegado: Se requiere rol de Administrador");
+                        boolean esUsuario = authorities.stream()
+                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Usuario"));
+                        boolean esSuperusuario = authorities.stream()
+                                .anyMatch(auth -> auth.getAuthority().equals("ROLE_Superusuario"));
+                        if (esUsuario) {
+                            System.err.println("Acceso denegado: Se requiere rol de Administrador o usuario");
                             response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado: Se requiere rol de Administrador");
                             return;
                         }
@@ -105,17 +100,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 //                    }
                     // Configurar la autenticación en el contexto de seguridad
 
-                   // authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    // authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
 
                 }
-            } catch (io.jsonwebtoken.ExpiredJwtException e) {
-                System.err.println("El token ha expirado: " + e.getMessage());
-            } catch (io.jsonwebtoken.SignatureException e) {
-                System.err.println("Firma del token no válida: " + e.getMessage());
-            } catch (Exception e) {
-                System.err.println("Error al validar el token: " + e.getMessage());
+
             }
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            System.err.println("El token ha expirado: " + e.getMessage());
+        } catch (io.jsonwebtoken.SignatureException e) {
+            System.err.println("Firma del token no válida: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Error al validar el token: " + e.getMessage());
         }
         filterChain.doFilter(request, response);
     }

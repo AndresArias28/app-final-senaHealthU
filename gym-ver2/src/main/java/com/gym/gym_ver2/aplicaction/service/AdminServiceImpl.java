@@ -7,7 +7,6 @@ import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
 import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
 import com.gym.gym_ver2.infraestructure.repository.RolRepository;
 import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,11 +54,10 @@ public class AdminServiceImpl implements  AdminService {
                 .cedulaUsuario(rq.getCedulaAdmin())
                 .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaAdmin()))
                 .idRol(Rol.builder().idRol(2).build())
-                //.idRol(rol)
                 .build();
 
         usuarioRepository.save(usuario);
-        return AuthResponse.builder().token("Usuario registrado").build();
+        return AuthResponse.builder().token("Administrador registrado").build();
     }
 
 }

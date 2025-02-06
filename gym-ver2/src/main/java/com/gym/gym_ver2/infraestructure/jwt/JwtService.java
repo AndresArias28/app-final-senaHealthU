@@ -12,10 +12,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-//UserDetailsService es una interfaz de Spring Security que se utiliza para recuperar los detalles del usuario.
-@Service//Es una interfaz que carga los datos específicos del usuario. Servicio que se encarga de la creacion y validacion de los tokens
+@Service//interfaz que carga los datos específicos del usuario. Servicio que se encarga de la creacion y validacion de los tokens
 public class JwtService {
-        private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";
+
+    private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";
 
     public String createToken(UserDetails usuario) {
         return generateToken(new HashMap<>(), usuario);
@@ -31,7 +31,6 @@ public class JwtService {
 
         return Jwts.builder()// Construir el token mediante la librería Jwts
                 .setClaims(extraClaims) // Información adicional, correo
-                //.setSubject(user.getUsername()) // Usar el correo como sujeto (identificador único)
                 .claim("rol", roles) // Agregar los roles del usuario
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expira en 24 minutos
@@ -82,17 +81,7 @@ public class JwtService {
         } catch (Exception e) {
             throw new RuntimeException("Error al verificar la expiración del token.", e);
         }
-        //return getExpiration(token).before(new Date());
+
     }
-
-//    private Date getExpiration(String token)
-//    {
-//        return getClaim(token, Claims::getExpiration);
-//    }
-
-//    private Claims extractAllClaims(String token) {
-//        return getParser().parseClaimsJws(token).getBody();
-//    }
-
 
 }

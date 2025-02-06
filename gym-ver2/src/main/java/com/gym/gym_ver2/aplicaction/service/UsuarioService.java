@@ -9,9 +9,11 @@ public interface UsuarioService {
 
     List<UsuarioDTO> getUsers();
 
-    void createUser(Usuario usuario);
+    //void createUser(Usuario usuario);
 
     UsuarioDTO getUser(Integer idUsuario);
 
     UserResponse actualizarUsuario(UsuarioDTO userRequest);
+
+    void updatePassword(String email, String newPassword);
 }

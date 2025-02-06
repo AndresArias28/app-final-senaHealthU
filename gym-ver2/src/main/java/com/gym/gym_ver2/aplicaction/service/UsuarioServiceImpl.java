@@ -5,6 +5,8 @@ import com.gym.gym_ver2.domain.model.pojos.UserResponse;
 import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
 import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
@@ -14,12 +16,15 @@ import java.util.Optional;
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
+    @PreAuthorize("hasAnyAuthority('ROLE_Administrador', 'ROLE_Superusuario')")
     @Override
     @Transactional
     public List<UsuarioDTO> getUsers() {
@@ -32,11 +37,6 @@ public class UsuarioServiceImpl implements UsuarioService {
                         usr.getIdRol().getIdRol()
                 ))
                 .toList();
-    }
-
-    @Override
-    public void createUser(Usuario usuario) {
-        usuarioRepository.save(usuario);
     }
 
     @Override
@@ -71,5 +71,16 @@ public class UsuarioServiceImpl implements UsuarioService {
                 userRequest.getEmailUsuario()
         );
         return new UserResponse("Usuario actualizado correctamente");
+    }
+
+    @Override
+    public void updatePassword(String email, String newPassword) {
+        Optional<Usuario> usuario = usuarioRepository.findByEmailUsuario(email);
+        if (usuario.isEmpty()) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        Usuario user = usuario.get();
+        user.setContrasenaUsuario(passwordEncoder.encode(newPassword));
+        usuarioRepository.save(user);
     }
 }

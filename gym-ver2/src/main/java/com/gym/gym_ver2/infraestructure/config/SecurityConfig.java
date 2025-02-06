@@ -37,7 +37,7 @@ public class SecurityConfig { //obtener la cadena de filtros
     private final UsuarioRepository userRepository;
 
     @Bean //configurar la cadena de filtros, se encarga de la seguridad
-        public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         try {
             return http
                     .csrf(AbstractHttpConfigurer::disable)//deshabilitar la proteccion csrf, no es necesario con JWT
@@ -49,9 +49,8 @@ public class SecurityConfig { //obtener la cadena de filtros
                                     .requestMatchers("/auth/**").permitAll()
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
-                                    .requestMatchers("/user/obtenereUsarios").hasAuthority("ROLE_Administrador")
+                                    .requestMatchers("/user/obtenereUsarios").hasAnyAuthority("ROLE_Administrador", "ROLE_Superusuario")
                                     .anyRequest().authenticated()
-
                     )
                     //configurar la sesion para que sea sin estado
                     .sessionManagement(sessionManagement ->

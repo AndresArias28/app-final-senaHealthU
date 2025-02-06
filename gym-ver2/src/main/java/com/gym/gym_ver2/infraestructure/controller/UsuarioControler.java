@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RequestMapping("/user")
@@ -47,10 +46,11 @@ public class UsuarioControler {
     @PutMapping("/actualizarUsuario")
     public ResponseEntity<UserResponse> updateUser(@RequestBody UsuarioDTO userRequest){//metodo para actualizar Usuario
         try{ // 200 OK si se actualiza correctamente
-            UserResponse res = userService.actualizarUsuario(userRequest); //envia al servicio la peticion
+
             if (userRequest == null) {//valida si la peticion es nula
                 return ResponseEntity.badRequest().build();
             }
+            UserResponse res = userService.actualizarUsuario(userRequest); //envia al servicio la peticion
             return ResponseEntity.ok(res);
         }catch (Exception e) {
             e.printStackTrace();
