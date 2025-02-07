@@ -22,8 +22,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.List;
 
 @Configuration//configurar objetos de spring
 @EnableWebSecurity
@@ -38,15 +41,29 @@ public class SecurityConfig { //obtener la cadena de filtros
 
     @Bean //configurar la cadena de filtros, se encarga de la seguridad
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        try {
-            return http
-                    .csrf(AbstractHttpConfigurer::disable)//deshabilitar la proteccion csrf, no es necesario con JWT
-                    //configurar las rutas que necesitan autenticacion
-                    .authorizeHttpRequests(authRequest ->
-                            authRequest
-                                   // .requestMatchers(HttpMethod.GET, "/admin/obtenerAdmins").hasAuthority("ROLE_Administrador")
-                                    //.requestMatchers(HttpMethod.POST,  "/admin/**").authenticated()
-                                    .requestMatchers("/auth/**").permitAll()
+                try {
+                    return http
+                            .csrf(AbstractHttpConfigurer::disable)//deshabilitar la proteccion csrf, no es necesario con JWT
+                            .cors(cors -> cors.configurationSource(request -> {
+                                CorsConfiguration config = new CorsConfiguration();
+                                config.setAllowedOrigins(List.of("*")); // Ajusta según sea necesario
+                                config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                                config.setAllowedHeaders(List.of("*"));
+                                return config;
+                            }))
+                            //configurar las rutas que necesitan autenticacion
+                            .authorizeHttpRequests(authRequest -> authRequest
+                                    .requestMatchers("/auth/**",
+                                            "/v3/api-docs/**",
+                                            "/swagger-ui/**",
+                                            "/swagger-ui.html",
+                                            "/swagger-ui/index.html",
+                                            "/swagger-resources/**",
+                                            "/configuration/ui",
+                                            "/configuration/security",
+                                            "/webjars/**",
+                                            "/error"
+                                    ).permitAll()
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                     .requestMatchers("/user/obtenereUsarios").hasAnyAuthority("ROLE_Administrador", "ROLE_Superusuario")

@@ -26,24 +26,14 @@ public class PasswordResetService {
                 .build();
         System.out.println("Token del serviicio: " + passW.getToken());
         return tokenRepository.save(passW);// Guardar el token en la base de datos
-
-        // Crear un nuevo token con una fecha de expiración (por ejemplo, 15 minutos)
-//        PasswordResetToken passwordResetToken = new PasswordResetToken(
-//                   token,
-//                usuario,
-//                LocalDateTime.now().plusMinutes(15)
-//        ); otra forma de hacerlo
-
     }
 
     public String validatePasswordResetToken(String token) {
         PasswordResetToken passwordResetToken = tokenRepository.findByToken(token)
                 .orElseThrow(() -> new RuntimeException("Token inválido o expirado"));
-
         if (passwordResetToken.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw new RuntimeException("Token expirado");
         }
-
         return passwordResetToken.getUsuario().getEmailUsuario();
     }
 

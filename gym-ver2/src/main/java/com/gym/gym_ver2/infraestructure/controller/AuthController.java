@@ -2,11 +2,14 @@ package com.gym.gym_ver2.infraestructure.controller;
 
 import com.gym.gym_ver2.domain.model.dto.EmailRequestForgotPass;
 import com.gym.gym_ver2.infraestructure.auth.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
+
+@Tag(name = "auth  Controller", description = "Endpoints para la autenticación y restablecimiento de contraseñas")
 
 @RestController
 @RequestMapping("/auth")

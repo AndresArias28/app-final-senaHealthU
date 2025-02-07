@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterOutlet } from '@angular/router';
-import { LoginService } from '../../core/services/login.service';
+import { LoginService } from '../../core/services/login/login.service';
 
 @Component({
   selector: 'app-nav',

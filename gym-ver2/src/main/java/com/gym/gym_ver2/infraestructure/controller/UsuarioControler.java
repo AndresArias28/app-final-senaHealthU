@@ -3,12 +3,17 @@ package com.gym.gym_ver2.infraestructure.controller;
 import com.gym.gym_ver2.aplicaction.service.UsuarioService;
 import com.gym.gym_ver2.domain.model.pojos.UserResponse;
 import com.gym.gym_ver2.domain.model.dto.UsuarioDTO;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+@Tag(name = "Auth Controller", description = "Endpoints para gestion de usuarios")
 @RequestMapping("/user")
 @RestController
 public class UsuarioControler {
@@ -29,6 +34,15 @@ public class UsuarioControler {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/obtenereUsario/{id}")
+    @Operation(
+            summary = "Obtener usuario por ID",
+            description = "Obtiene un usuario específico basado en su ID."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Usuario obtenido con éxito"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
+            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
+    })
     public ResponseEntity<UsuarioDTO> obtenerUsuario(@PathVariable("id") Integer idUsuario) {
         try{
             UsuarioDTO usuario = userService.getUser(idUsuario);

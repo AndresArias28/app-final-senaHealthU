@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { User } from '../../../shared/models/user';
 import { CommonModule } from '@angular/common';
 import { UserService } from '../../../core/services/user/user.service';
-import { LoginService } from '../../../core/services/login.service';
+import { LoginService } from '../../../core/services/login/login.service';
 
 @Component({
   selector: 'app-personal-details',

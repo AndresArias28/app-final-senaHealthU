@@ -5,12 +5,15 @@ import com.gym.gym_ver2.domain.model.dto.AdminDTO;
 import com.gym.gym_ver2.domain.model.requestModels.RegisterAdminRequest;
 import com.gym.gym_ver2.infraestructure.auth.AuthResponse;
 import com.gym.gym_ver2.infraestructure.auth.RegisterRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+@Tag(name = "Admin Controller", description = "Endpoints para gestion de admins")
 
 @RequestMapping("/admin")
 @RestController

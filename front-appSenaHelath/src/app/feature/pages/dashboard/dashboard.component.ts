@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavComponent } from '../../../shared/nav/nav.component';
 import { CommonModule } from '@angular/common';
-import { LoginService } from '../../../core/services/login.service';
+import { LoginService } from '../../../core/services/login/login.service';
 import { User } from '../../../shared/models/user';
 import { PersonalDetailsComponent } from "../personal-details/personal-details.component";
 

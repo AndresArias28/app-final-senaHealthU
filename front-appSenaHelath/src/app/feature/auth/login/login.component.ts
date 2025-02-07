@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
-import { LoginService } from '../../../core/services/login.service';
+import { LoginService } from '../../../core/services/login/login.service';
 import { LoginRequest } from '../../../shared/models/loginRequest';
 
 @Component({
@@ -27,10 +27,11 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  //boton iniciar sesion
+  //metodo del boton iniciar sesion
   login() {
+    //formularios reactivos
     if (this.loginForm.valid) {//validar el formulario
-      this.loginService.login(this.loginForm.value as LoginRequest).subscribe({
+      this.loginService.login(this.loginForm.value as LoginRequest).subscribe({//
         next: (data) => {
           //console.log(data);
         },
