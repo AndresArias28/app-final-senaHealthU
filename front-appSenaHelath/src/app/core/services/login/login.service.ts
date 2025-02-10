@@ -18,25 +18,18 @@ export class LoginService {
   //servicio para el login utilizando httpclient, se inyecta en el constructor 
   // agregar el proveedor en app.config.ts
   constructor(private http: HttpClient) {
-    this.currentUserLoginOn = new BehaviorSubject<boolean>(sessionStorage.getItem('token') !== null);
-    this.currentUserData = new BehaviorSubject<String>(sessionStorage.getItem('token') || '');
+    const token = sessionStorage.getItem('token');
+    console.log('Token cargado al iniciar el LoginService:', token);
+    this.currentUserLoginOn = new BehaviorSubject<boolean>(token !== null);
+    this.currentUserData = new BehaviorSubject<String>(token || "");
  
   }
 
   login(credentials: LoginRequest): Observable<any> {
-    // return this.http.get<User>('assets/data.json').pipe(
-    //   tap((userData : User) => {
-    //     //si todo sale bien encadeno una serie de operaciones con tap
-    //     sessionStorage.setItem("token", userData);//guarda el token en el localStorage
-    //     this.currentUserData.next(userData);//emitir informacion a los componentes suscritos
-    //     this.currentUserLoginOn.next(true);
-    //   }),
-    //   catchError(this.handleError)
-    // );
-
     return this.http.post<any>(environment.urlHost+"auth/login",credentials).pipe(
       tap( (userData) => {//si todo sale bien encadeno una serie de operaciones con tap
-        sessionStorage.setItem("token", userData.token);//guarda el token en el localStorage
+        console.log('Token recibido del backend:', userData.token);
+        sessionStorage.setItem("token", userData.token);//guarda el token en el sessionStorage
         this.currentUserData.next(userData.token);
         this.currentUserLoginOn.next(true);
       }),
@@ -66,12 +59,13 @@ export class LoginService {
     return this.currentUserLoginOn.asObservable();
   }
 
-  get userToken(): String  {
+  get userToken(): String | null {
     return this.currentUserData.value;
   }
 
   logout() {
     sessionStorage.removeItem('token');
+    this.currentUserData.next("");
     this.currentUserLoginOn.next(false);
   }
 }
