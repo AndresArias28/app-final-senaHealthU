@@ -31,6 +31,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         System.out.println("Autoridades cargadas: " + authorities);
         System.out.println("Cargando usuario: " + email);
 
+
         return new org.springframework.security.core.userdetails.User(// Devuelve un objeto UserDetails
                 usuario.getEmailUsuario(),
                 usuario.getContrasenaUsuario(), // Contraseña encriptada de la base de datos

@@ -34,15 +34,6 @@ public class UsuarioControler {
 
     @CrossOrigin(origins = "http://localhost:4200")
     @GetMapping("/obtenereUsario/{id}")
-    @Operation(
-            summary = "Obtener usuario por ID",
-            description = "Obtiene un usuario específico basado en su ID."
-    )
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Usuario obtenido con éxito"),
-            @ApiResponse(responseCode = "404", description = "Usuario no encontrado"),
-            @ApiResponse(responseCode = "500", description = "Error interno del servidor")
-    })
     public ResponseEntity<UsuarioDTO> obtenerUsuario(@PathVariable("id") Integer idUsuario) {
         try{
             UsuarioDTO usuario = userService.getUser(idUsuario);

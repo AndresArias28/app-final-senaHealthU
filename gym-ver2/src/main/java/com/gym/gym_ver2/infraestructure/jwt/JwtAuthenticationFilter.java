@@ -37,16 +37,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override// se ejecuta en cada peticion
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String uri = request.getRequestURI();
+       // final String uri = request.getRequestURI();
         final String token = getTokenFromRequest(request);//obtener token
         final String userEmail;
 
 
-        // Excluir rutas públicas
-        if (uri.startsWith("/v3/api-docs") || uri.startsWith("/swagger-ui") || uri.equals("/error")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+//        // Excluir rutas públicas
+//        if (uri.startsWith("/v3/api-docs") || uri.startsWith("/swagger-ui") || uri.equals("/error")) {
+//            filterChain.doFilter(request, response);
+//            return;
+//        }
 
         if (token == null) { //validar si el token es nulo
             System.out.println("Token no encontrado en la solicitud");

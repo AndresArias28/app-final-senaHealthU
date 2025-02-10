@@ -56,17 +56,14 @@ public class SecurityConfig { //obtener la cadena de filtros
                                     .requestMatchers("/auth/**",
                                             "/v3/api-docs/**",
                                             "/swagger-ui/**",
-                                            "/swagger-ui.html",
-                                            "/swagger-ui/index.html",
-                                            "/swagger-resources/**",
-                                            "/configuration/ui",
-                                            "/configuration/security",
-                                            "/webjars/**",
-                                            "/error"
+                                            "/swagger-ui.html"
+
                                     ).permitAll()
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                                    //.requestMatchers(HttpMethod.GET).permitAll()
                                     .requestMatchers("/user/obtenereUsarios").hasAnyAuthority("ROLE_Administrador", "ROLE_Superusuario")
+                                    .requestMatchers("/user/obtenereUsario/**").hasAnyAuthority("ROLE_Administrador", "ROLE_Superusuario")
                                     .anyRequest().authenticated()
                     )
                     //configurar la sesion para que sea sin estado

@@ -46,6 +46,7 @@ public class AuthServiceImpl implements  AuthService {
             HashMap<String, Object> aux = new HashMap<>(); //crear token con el usuario
             aux.put("sub", rq.getEmailUsuario());//agregar el email del usuario al token
             String token = jwtService.generateToken(aux, userDetails);
+            System.out.println("Token generado: " + token);
             return AuthResponse.builder().token(token).build();//crear la respuesta con el token
         } catch (Exception e) {
             throw new RuntimeException("Usuario o contraseña incorrectos");

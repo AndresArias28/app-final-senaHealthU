@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 
 @Tag(name = "auth  Controller", description = "Endpoints para la autenticación y restablecimiento de contraseñas")
-
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
