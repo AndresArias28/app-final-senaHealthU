@@ -18,7 +18,6 @@ export class PersonalDetailsComponent {
   userLoginOn: boolean = false;
   editMode: boolean = false;
   registerForm : FormGroup;
-  
 
   constructor( private userService: UserService, private formBuilder: FormBuilder, private loginService: LoginService ) {
 
@@ -27,7 +26,6 @@ export class PersonalDetailsComponent {
       idUsuario: [''],
       nombreUsuario: ['', Validators.required],
       emailUsuario: ['', Validators.required],
-     
     });
 
     this.userService.getUser(11).subscribe({
@@ -71,7 +69,6 @@ export class PersonalDetailsComponent {
         error:(errorData)=> console.error(errorData)
       })
     }
-
   }
 
 }

@@ -27,8 +27,7 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  //metodo del boton iniciar sesion
-  login() {
+  login() {  //metodo del boton iniciar sesion
     //formularios reactivos
     if (this.loginForm.valid) {//validar el formulario
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({//

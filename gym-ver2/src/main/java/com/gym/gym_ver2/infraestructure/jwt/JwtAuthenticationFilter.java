@@ -41,13 +41,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         final String token = getTokenFromRequest(request);//obtener token
         final String userEmail;
 
-
-//        // Excluir rutas públicas
-//        if (uri.startsWith("/v3/api-docs") || uri.startsWith("/swagger-ui") || uri.equals("/error")) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
-
         if (token == null) { //validar si el token es nulo
             System.out.println("Token no encontrado en la solicitud");
             filterChain.doFilter(request, response);
@@ -56,7 +49,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         try {
             userEmail = jwtService.extractUsername(token); //extraer el correo del token
-            System.out.println("Correo del token: " + userEmail);
+            System.out.println("Correo del token desde el filtro: " + userEmail);
             //validar token y correo
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = userDetailsService.loadUserByUsername(userEmail);
@@ -74,7 +67,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     List<GrantedAuthority> authorities = (roles != null) ? Collections.singletonList(new SimpleGrantedAuthority(roles)) : List.of();
                     System.out.println("Roles del token fitro: " + roles);
                     System.out.println("Autoridades generadas filtro: " + authorities);
-                    // Validar que el usuario tenga el rol ROLE_Administrador si accede a rutas específicas
+                    // Validar la url de la petición
                     if (request.getRequestURI().startsWith("/user/obtenereUsarios")) {
                         boolean esAdministrador = authorities.stream()
                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_Administrador"));
@@ -82,9 +75,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_Usuario"));
                         boolean esSuperusuario = authorities.stream()
                                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_Superusuario"));
+                        // Validar que el usuario tenga el rol usuario para denegarle el permiso
                         if (esUsuario) {
-                            System.err.println("Acceso denegado: Se requiere rol de Administrador o usuario");
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado: Se requiere rol de Administrador");
+                            System.err.println("Access Denied: Required Superusuario or admin role");
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied: Requiere Administrador or Superusuario role");
                             return;
                         }
                     }

@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { LoginRequest } from '../../../shared/models/loginRequest';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
-import { User } from '../../../shared/models/user';
 import { environment } from '../../../../environments/environmets';
 
 @Injectable({

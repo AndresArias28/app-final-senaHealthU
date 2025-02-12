@@ -50,8 +50,7 @@ public class UsuarioControler {
     @CrossOrigin(origins = "http://localhost:4200")
     @PutMapping("/actualizarUsuario")
     public ResponseEntity<UserResponse> updateUser(@RequestBody UsuarioDTO userRequest){//metodo para actualizar Usuario
-        try{ // 200 OK si se actualiza correctamente
-
+        try{
             if (userRequest == null) {//valida si la peticion es nula
                 return ResponseEntity.badRequest().build();
             }
