@@ -3,6 +3,7 @@ import { LoginRequest } from '../../../shared/models/loginRequest';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
 import { environment } from '../../../../environments/environmets';
+import {jwtDecode} from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -24,6 +25,16 @@ export class LoginService {
  
   }
 
+  //obtener el rol
+  getRole() {
+    const token = sessionStorage.getItem('token');
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      return decodedToken.rol;
+    }
+  }
+
+
   login(credentials: LoginRequest): Observable<any> {
     return this.http.post<any>(environment.urlHost+"auth/login",credentials).pipe(
       tap( (userData) => {//si todo sale bien encadeno una serie de operaciones con tap
@@ -31,13 +42,16 @@ export class LoginService {
         sessionStorage.setItem("token", userData.token);//guarda el token en el sessionStorage
         this.currentUserData.next(userData.token);
         this.currentUserLoginOn.next(true);
+
       }),
-      map((userData)=> userData.token),//transforma el objeto y devuelve el token
+      map((userData)=> userData),//transforma el objeto y devuelve el token
       catchError(this.handleError)
     );
   }
 
-    private handleError(error: HttpErrorResponse) {
+
+
+  private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       console.error('Se ha producio un error ', error.error);
     } else {
