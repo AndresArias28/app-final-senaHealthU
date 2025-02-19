@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
 
-    private final UsuarioRepository userRepository;
+    private final UsuarioRepository userRepository;//patron singleton
 
     public CustomUserDetailsService(UsuarioRepository userRepository1) {
         this.userRepository = userRepository1;

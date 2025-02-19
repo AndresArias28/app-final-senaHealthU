@@ -1,5 +1,5 @@
 package com.gym.gym_ver2.infraestructure.auth;
-
+//patrones utilizados: builder, singleton,  inyeccion de dependencias. fachada, observerr, Cadena de Responsabilidad
 import com.gym.gym_ver2.aplicaction.service.PasswordResetService;
 import com.gym.gym_ver2.aplicaction.service.UsuarioService;
 import com.gym.gym_ver2.domain.model.entity.Rol;
@@ -37,7 +37,7 @@ public class AuthServiceImpl implements  AuthService {
         if (rq.getContrasenaUsuario() == null || rq.getContrasenaUsuario().isEmpty()) {
             throw new IllegalArgumentException("La contraseña no puede estar vacía");
         }
-        try {
+        try {//patron Cadena de Responsabilidad
             authenticationManager.authenticate(// autentica que el usuario y la contraseña sean correctos
                     new UsernamePasswordAuthenticationToken(rq.getEmailUsuario(), rq.getContrasenaUsuario())
             );
@@ -101,10 +101,8 @@ public class AuthServiceImpl implements  AuthService {
 
     @Override
     public String recoverPassword(String newPassword, String token) {
-        //String email = passwordResetService.validatePasswordResetToken(newPassword);
-        //Validar el token
         String email = passwordResetService.validatePasswordResetToken(token);
-         usuarioService.updatePassword(email, newPassword);
+        usuarioService.updatePassword(email, newPassword);
         return "Contraseña actualizada correctamente";
     }
 

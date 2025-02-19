@@ -32,7 +32,7 @@ export class NavComponent implements OnInit {
   logout() {
     this.loginService.logout();//llamar al metodo logout del servicio de login
     this.loginService.currentUserLoginOn.next(false);//emitir el estado del login a los componentes suscritos
-  this.router.navigate(['/inicio']);//redirigir a la pagina de login
+    this.router.navigate(['/iniciar-sesion']);//redirigir a la pagina de login
   }
 
 }

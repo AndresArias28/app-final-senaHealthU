@@ -41,7 +41,7 @@ export class LoginComponent implements OnInit {
         },
         complete: () => {
           console.log('complete');
-          this.router.navigate(['/inicio']);
+          this.router.navigate(['/inicio-admin']);
           this.loginForm.reset();
         }
       })

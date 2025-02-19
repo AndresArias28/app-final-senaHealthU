@@ -1,5 +1,5 @@
 package com.gym.gym_ver2.infraestructure.jwt;
-
+//patrones: singleton, builder, fachada, estrategy, decorador en .signWith(getKey()
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @Service//interfaz que carga los datos específicos del usuario. Servicio que se encarga de la creacion y validacion de los tokens
 public class JwtService {
 
-    private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";
+    private static final String SECRET_KEY = "0rWp3H+rGhqzZ8vFLVUbC6Y1QnA4pRtj/BOwXaFd5Zw=";//singleton que contiene la clave secreta
 
     public String createToken(UserDetails usuario) {
         return generateToken(new HashMap<>(), usuario);
@@ -34,7 +34,7 @@ public class JwtService {
                 .claim("rol", roles) // Agregar los roles del usuario
                 .setIssuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24)) // Expira en 24 minutos
-                .signWith(getKey(), SignatureAlgorithm.HS256) // Firma con clave secreta
+                .signWith(getKey(), SignatureAlgorithm.HS256) // Firma con clave secreta, añade seguridad
                 .compact(); // Generar el token de tipo String
     }
     // Obtener la clave secreta en formato Key

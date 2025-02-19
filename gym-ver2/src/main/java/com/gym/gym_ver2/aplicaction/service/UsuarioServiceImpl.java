@@ -64,8 +64,7 @@ public class UsuarioServiceImpl implements UsuarioService {
                 userRequest.getEmailUsuario() == null || userRequest.getEmailUsuario().isEmpty()) {
             return new UserResponse("Datos inválidos: nombre o email vacío");
         }
-        // Actualizar el usuario
-        usuarioRepository.updateUser(
+        usuarioRepository.updateUser(    // Actualizar el usuario -- patron repository
                 userRequest.getIdUsuario(),
                 userRequest.getNombreUsuario(),
                 userRequest.getEmailUsuario()
