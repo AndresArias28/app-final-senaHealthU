@@ -14,6 +14,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -54,8 +55,7 @@ public class AuthServiceImpl implements  AuthService {
     }
 
     public AuthResponse register(RegisterRequest rq) {
-        // mediante el patron builder se crea un usuario con la informacion del request
-        Usuario usuario = Usuario.builder()
+        Usuario usuario = Usuario.builder()// mediante el patron builder se crea un usuario con la informacion del request
                 .nombreUsuario(rq.getNombreUsuario())
                 .apellidoUsuario(rq.getApellidoUsuario())
                 .emailUsuario(rq.getEmailUsuario())
@@ -66,14 +66,15 @@ public class AuthServiceImpl implements  AuthService {
                 .fechaNacimiento(rq.getFechaNacimiento())
                 .horasRecompensas(rq.getHorasRecompensas())
                 .numeroFicha(rq.getNumeroFicha())
-                .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaUsuario()))
+                .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaUsuario()))//codificar la contraseña
                 .idRol(Rol.builder().idRol(3).build())//po defecto se asigna el rol de usuario
                 .build();
-
         userRepository.save(usuario);//guardar el usuario en la base de datos
         //crear token con el usuario creado y retornar la respuesta
         return AuthResponse.builder().token(jwtService.createToken(usuario)).build();
     }
+
+
 
     public Usuario getUsuarioActual(String email) {
         return userRepository.findByEmailUsuario(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));

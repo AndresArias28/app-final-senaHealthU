@@ -53,11 +53,11 @@ public class SecurityConfig { //obtener la cadena de filtros
                             }))
                             //configurar las rutas que necesitan autenticacion
                             .authorizeHttpRequests(authRequest -> authRequest
-                                    .requestMatchers("/auth/**",
+                                    .requestMatchers(
+                                            "/auth/**",
                                             "/v3/api-docs/**",
                                             "/swagger-ui/**",
                                             "/swagger-ui.html"
-
                                     ).permitAll()
                                     .requestMatchers(HttpMethod.PUT).permitAll()
                                     .requestMatchers(HttpMethod.OPTIONS).permitAll()

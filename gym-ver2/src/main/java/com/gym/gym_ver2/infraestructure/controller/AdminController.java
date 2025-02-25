@@ -9,8 +9,10 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.List;
 
 @Tag(name = "Admin Controller", description = "Endpoints para gestion de admins")
@@ -39,17 +41,24 @@ public class AdminController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest rq) {
+    @PreAuthorize("hasAnyAuthority('ROLE_Administrador', 'ROLE_Superusuario')")
+    public ResponseEntity<AuthResponse> registerAdmin(@RequestBody RegisterAdminRequest rq, Principal principal) {
         try{
             if (rq == null) {
                 return ResponseEntity.badRequest().build();
             }
-            return ResponseEntity.ok(adminService.registerAdmin(rq));
+
+            if (principal == null) {
+                throw new RuntimeException("Error: El usuario no está autenticado.");
+            }
+            return ResponseEntity.ok(adminService.registerAdmin(rq, principal));
         }catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
     }
+
+
 
 }

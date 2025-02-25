@@ -1,61 +1,140 @@
-<p class="text-danger">{{ loginError }}</p>
-<div  class="container d-flex justify-content-center allign-items-center min-vh-100">
-  <div class="card shadow-sm p-4" style="width: 400px">
-    <h1 class="text-center mb-2">Iniciar Sesión</h1>
-    <!-- Google Sign In Button -->
-    <button class="btn btn-light mb-4 d-flex align-items-center justify-content-center gap-2 w-100" >
-      <img src="../../../../assets/gogle.png" alt="Google" width="20" />
-      Sign up with Google
-    </button>
-
-    <div class="text-center text-muted mb-4">Or use Email</div>
-
-    <form [formGroup]="loginForm">
-      <label for="inputEmail" class="form-label">Email</label>
-      <input
-        formControlName="emailUsuario"
-        type="email"
-        class="form-control"
-        id="exampleInputEmail"
-        aria-describedby="emailHelp"
-      />
-      <div
-        *ngIf="email.invalid && (email.dirty || email.touched)"
-        class="text-danger"
-      >
-        <div *ngIf="email.errors?.['required']">El Email es requerido.</div>
-        <div *ngIf="email.errors?.['email']">
-          El Email debe tener un formato válido.
-        </div>
-      </div>
-
-      <div class="mb-3">
-        <label for="exampleInputPassword" class="form-label">Password</label>
-        <input
-          formControlName="contrasenaUsuario"
-          type="password"
-          class="form-control"
-          id="exampleInputPassword"
-        />
-        <div
-          *ngIf="password.invalid && (password.dirty || password.touched)"
-          class="text-danger"
+<!-- <p class="text-danger">{{ loginError }}</p> -->
+<div class="max-vh-100">
+  <div class="row min-vh-100">
+    <!-- Background Image Column -->
+    <div class="col-lg-6 d-none d-lg-block position-relative bg-image">
+      <div class="dark-overlay">
+        <!-- <h1
+          class="text-white position-absolute top-50 start-50 translate-middle display-3 fw-bold"
         >
-          <div *ngIf="password.errors?.['required']">
-            El Password es requerido.
-          </div>
-          <div *ngIf="password.errors?.['minlength']">
-            El Password debe tener al menos 6 caracteres.
-          </div>
-        </div>
+          HealthU
+        </h1> -->
       </div>
-      <button type="submit" (click)="login()" class="btn btn-success w-100 mb-3">
-        Iniciar Sesión
-      </button>
-      <p class="text-muted small text-center">
-        By signing up to uiUXART, means you agree to our <a href="#">Privacy Policy</a> and
-        <a href="#">Terms of Service</a>
-      </p>
-    </form>
+    </div>
+
+    <!-- Login Form Column -->
+    <div class="col-lg-6 d-flex align-items-center justify-content-center">
+      <div class="login-container">
+        <h2 class="text-center p-4">Iniciar Sesión</h2>
+          <!-- Logo -->
+          <div class="text-center">
+            <img
+              src="../../../../assets/Designer.png"
+              alt="sena-HealthU"
+              class="img-fluid"
+              style="max-width: 220px"
+            />
+          </div>
+        <div class="text-center mb-4">
+          <span>Al continuar, aceptas nuestro</span>
+          <a href="#" class="enlace"> Acuerdo del usuario</a>
+          <span> y confirmas que has entendido la </span>
+          <a href="#" class="enlace">Política de privacidad</a>.
+        </div>
+      
+        <!-- Google Sign In Button -->
+        <!-- <button class="btn btn-light mb-4 d-flex align-items-center justify-content-center gap-2 w-100">
+          <img src="../../../../assets/gogle.png" alt="Google" width="20" />
+          Usar Google
+        </button> -->
+
+        <!-- Login Form -->
+        <form [formGroup]="loginForm">
+          <div >
+            <label class="form-label"> Email </label>
+            <input
+              formControlName="emailUsuario"
+              type="email"
+              class="form-control form-control-lg"
+              id="exampleInputEmail"
+              aria-describedby="emailHelp"
+            />
+          </div>
+
+          <div
+            *ngIf="email.invalid && (email.dirty || email.touched)"
+            class="error-container "
+          >
+            <div *ngIf="email.errors?.['required']">
+              El Email es requerido.
+            </div>
+            <div *ngIf="email.errors ?.['email'] || email.errors ?.['pattern']">
+              El Email debe tener un formato válido.
+            </div>
+
+          </div>
+
+          <div >
+            <label for="exampleInputPassword" class="form-label mt-5">
+              Contraseña
+            </label>
+            <div class="input-group">
+              <input
+                formControlName="contrasenaUsuario"
+                [type]="showPassword ? 'text' : 'password'"
+                class="form-control  "
+                id="exampleInputPassword"
+              />
+
+              <button
+                class="btn btn-outline-secondary "
+                type="button"
+                (click)="togglePassword()"
+              >
+                <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
+              </button>
+            </div>
+              <div
+                *ngIf="password.invalid && (password.dirty || password.touched)"
+                class="error-container "
+              >
+                <div *ngIf="password.errors?.['required']">
+                  El Password es requerido.
+                </div>
+                <div *ngIf="password.errors?.['minlength']">
+                  El Password debe tener al menos 6 caracteres.
+                </div>
+              </div>
+
+           
+          </div>
+          <div class="text-end  mt-4 mb-2">
+            <a (click)="mostrarModal()"  class="enlace" >¿Has olvidado tu contraseña?</a>
+          </div>
+          <div class="text-end mb-2">
+            <span>¿Es tu primera vez en HealthU? </span>
+            <a href="#" class="enlace">Regístrate</a>
+          </div>
+          <!-- </div> -->
+          <button
+            type="submit"
+            (click)="login()"
+            class="btn btn-success mb-4 w-100"
+          >
+            Iniciar Sesión
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="modalRecuperar" tabindex="-1" aria-labelledby="modalRecuperarLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-white text-black">
+      <div class="modal-header border-0">
+        <h5 class="modal-title fw-bold" id="modalRecuperarLabel">Restablecer tu contraseña</h5>
+        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <p class="mb-3">
+          Introduce tu dirección de correo electrónico o nombre de usuario y te enviaremos un enlace para que restablezcas la contraseña.
+        </p>
+        <input type="email" class="form-control bg-white text-black rounded-pill p-3 border-1" placeholder="Correo electrónico o nombre de usuario *">
+        <button class="btn btn-primary w-100 mt-3 rounded-pill" disabled>Restablecer contraseña</button>
+        <a href="#" class="d-block mt-3 text-primary">¿Necesitas ayuda?</a>
+      </div>
+    </div>
   </div>
 </div>

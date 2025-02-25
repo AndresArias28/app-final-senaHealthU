@@ -10,6 +10,8 @@ import com.gym.gym_ver2.infraestructure.repository.UsuarioRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -41,12 +43,13 @@ public class AdminServiceImpl implements  AdminService {
     }
 
     @Override
-    public AuthResponse registerAdmin(RegisterAdminRequest rq) {
+    public AuthResponse registerAdmin(RegisterAdminRequest rq, Principal principal) {
         System.out.println("Accediendo al método protegido.");
-
+        Usuario usuarioActual = usuarioRepository.findByEmailUsuario(principal.getName())
+                .orElseThrow(() -> new RuntimeException("Usuario autenticado no encontrado"));
+        System.out.println("Usuario autenticado: " + usuarioActual.getNombreUsuario());
         Rol rol = rolRepository.findByNombreRol("Administrador")
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
-        
         Usuario usuario = Usuario.builder()
                 .nombreUsuario(rq.getNombreAdmin())
                 .apellidoUsuario(rq.getApellidoAdmin())
@@ -55,7 +58,6 @@ public class AdminServiceImpl implements  AdminService {
                 .contrasenaUsuario(passwordEncoder.encode(rq.getContrasenaAdmin()))
                 .idRol(Rol.builder().idRol(2).build())
                 .build();
-
         usuarioRepository.save(usuario);
         return AuthResponse.builder().token("Administrador registrado").build();
     }

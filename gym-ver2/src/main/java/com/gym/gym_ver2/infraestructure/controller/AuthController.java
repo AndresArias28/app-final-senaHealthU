@@ -5,8 +5,10 @@ import com.gym.gym_ver2.infraestructure.auth.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Map;
 
 @Tag(name = "auth  Controller", description = "Endpoints para la autenticación y restablecimiento de contraseñas")
@@ -25,6 +27,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerUsers(@RequestBody RegisterRequest rq) {
+
         return ResponseEntity.ok(authService.register(rq));
     }
 
@@ -42,7 +45,5 @@ public class AuthController {
         String newPassword = request.get("password");
         return ResponseEntity.ok(authService.recoverPassword(newPassword, token));
     }
-
-
 
 }

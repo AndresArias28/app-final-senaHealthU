@@ -7,6 +7,7 @@ import { LoginService } from '../../../core/services/login/login.service';
 import { LoginRequest } from '../../../shared/models/loginRequest';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'ngx-sonner';
+declare var window: any;
 
 @Component({
   selector: 'app-login',
@@ -16,9 +17,18 @@ import { toast } from 'ngx-sonner';
 })
 export class LoginComponent implements OnInit {
 
+  mostrarModal() {
+    const modalElement = document.getElementById('modalRecuperar');
+    if (modalElement) {
+      const modal = new window.bootstrap.Modal(modalElement);
+      modal.show();
+    }
+  }
+
   loginError: string = '';
   loginForm;
   message: string = '';
+  showPassword = false;
 
   constructor(
     private formBuilder: FormBuilder,
@@ -28,7 +38,7 @@ export class LoginComponent implements OnInit {
   ) {
     //validaciones del formulario reactivo
     this.loginForm = this.formBuilder.group({
-      emailUsuario: ['', [Validators.required, Validators.email, ]],
+      emailUsuario: ['', [Validators.required, Validators.email, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$') ]],
       contrasenaUsuario: ['', [Validators.required, Validators.minLength(6)]],
     });
   }
@@ -40,11 +50,9 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {//validar el formulario
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({//
         next: (data) => {
-          
-          //const decode:any = jwtDecode(data);
-          //console.log('Decodificado:', decode);
+
           const rol = this.loginService.getRole();
-          console.log('Rol otenido:', rol);
+          console.log('Rol obtenido:', rol);
 
           // Redirigir según el rol
           if (rol == 'ROLE_Administrador') {
@@ -65,7 +73,6 @@ export class LoginComponent implements OnInit {
         },
         complete: () => {
           console.log('complete');
-          //this.router.navigate(['/inicio-admin']);
           this.loginForm.reset();
         }
       })
@@ -74,6 +81,10 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
       this.loginError = 'Error en el formulario';
     }
+  }
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   get email() {

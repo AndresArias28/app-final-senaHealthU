@@ -11,7 +11,7 @@ export const routes: Routes = [
     {
         path: 'inicio-admin',
         component: DashboardComponent, 
-        canActivate: [authGuard, roleGuard],
+        //canActivate: [authGuard, roleGuard],
         data: {role: 'ROLE_Administrador'}
     },
     {
