@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, NgZone, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -7,28 +7,29 @@ import { LoginService } from '../../../core/services/login/login.service';
 import { LoginRequest } from '../../../shared/models/loginRequest';
 import { jwtDecode } from 'jwt-decode';
 import { toast } from 'ngx-sonner';
+import { RecuperarContrasenaComponent } from '../recuperar-contrasena/recuperar-contrasena.component';
+import { bootstrapApplication } from '@angular/platform-browser';
 declare var window: any;
 
 @Component({
   selector: 'app-login',
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, RecuperarContrasenaComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
+
 export class LoginComponent implements OnInit {
 
-  mostrarModal() {
-    const modalElement = document.getElementById('modalRecuperar');
-    if (modalElement) {
-      const modal = new window.bootstrap.Modal(modalElement);
-      modal.show();
-    }
-  }
-
+ 
+  
+  @ViewChild(RecuperarContrasenaComponent) recuperarComponent!: RecuperarContrasenaComponent;
+ // private modalInstance!: new  Modal | null; 
+  contrasenaIngresada: string = '';
   loginError: string = '';
   loginForm;
   message: string = '';
   showPassword = false;
+  correoIngresado: string = '';
 
   constructor(
     private formBuilder: FormBuilder,
@@ -45,7 +46,8 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {}
 
-  login() {  //metodo del boton iniciar sesion
+
+  login() {  
     //formularios reactivos
     if (this.loginForm.valid) {//validar el formulario
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({//
@@ -81,6 +83,37 @@ export class LoginComponent implements OnInit {
       this.loginForm.markAllAsTouched();
       this.loginError = 'Error en el formulario';
     }
+  }
+
+  ngAfterViewInit() {
+    this.recuperarComponent.modalAbierto.subscribe(() => {
+      this.mostrarModal();
+    });
+  }
+
+  mostrarModal() {
+    const modalElement = document.getElementById('modalRecuperar');
+    if (modalElement) {
+      const modal = new window.bootstrap.Modal(modalElement);
+      modal.show();
+    }
+
+    modalElement?.addEventListener('hidden.bs.modal', () => {
+      this.eliminarBackdrop();
+    });
+    
+  }
+
+  eliminarBackdrop() {
+    const backdrop = document.querySelector('.modal-backdrop');
+    if (backdrop) {
+      backdrop.remove();
+      document.body.classList.remove('modal-open'); // Elimina la clase que bloquea la pantalla
+    }
+  }
+
+  abrirModalDesdeLogin() {
+    this.recuperarComponent.abrirModal();
   }
 
   togglePassword() {

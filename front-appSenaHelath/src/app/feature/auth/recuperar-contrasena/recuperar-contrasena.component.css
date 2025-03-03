@@ -1,10 +1,10 @@
-.modal-content {
+  .modal-content {
     border-radius: 20px;
   }
   
   .form-control {
-    background-color: #333 !important;
-    color: white !important;
+    background-color: #f1e9e9 !important;
+    color: rgb(30, 31, 29) !important;
   }
   
   .form-control::placeholder {

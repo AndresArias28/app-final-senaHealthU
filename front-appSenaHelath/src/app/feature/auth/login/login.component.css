@@ -5,22 +5,12 @@
 .bg-image {
   background-image: url('../../../../assets/iniciosesion1.jpeg');
   background-color: #ecf3ef;
-  background-size: 85% auto;
+  background-size: 100% auto;
   background-position: center;
   background-repeat: no-repeat;
   /*border: 10px solid #39A900;  Marco sólido de 10px de color gris */
   border-radius: 15px;  /*Bordes redondeados */
- /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  Sombra suave */
-}
-
-.btn-success {
-  background-color: #39A900 !important;
-  border-radius: 8px;
-  transition: all 0.3s ease-in-out;
-}
-
-.btn-success:hover {
-  background-color: #2e8700 !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);  
 }
 
 .dark-overlay {

@@ -20,10 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "usuario", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "email_usuario"),
-        @UniqueConstraint(columnNames = "contrasena_usuario")
-})
+@Table(name = "usuario", uniqueConstraints = { @UniqueConstraint(columnNames = "email_usuario"),  @UniqueConstraint(columnNames = "contrasena_usuario")})
 public class Usuario implements UserDetails {
 
     @Id
@@ -31,10 +28,8 @@ public class Usuario implements UserDetails {
     @Column(name = "id_usuario")
     private Integer idUsuario;
 
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "id_rol", referencedColumnName = "id_rol", nullable = false)
-   // @JsonBackReference
     private Rol idRol;
 
     @Column(name="nombre_usuario")

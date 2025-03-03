@@ -20,7 +20,7 @@ public class PasswordResetService {
     public PasswordResetToken createResetTokenForUser(Usuario usuario, String token) {
         //String token = UUID.randomUUID().toString(); // Generar un token único
         PasswordResetToken passW = PasswordResetToken.builder()
-                .token(token)
+                .token(token)   // Asignar el token
                 .usuario(usuario)
                 .expiryDate(LocalDateTime.now().plusMinutes(15))
                 .build();

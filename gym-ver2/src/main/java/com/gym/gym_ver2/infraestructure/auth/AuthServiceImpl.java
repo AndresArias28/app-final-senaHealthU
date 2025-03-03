@@ -74,15 +74,12 @@ public class AuthServiceImpl implements  AuthService {
         return AuthResponse.builder().token(jwtService.createToken(usuario)).build();
     }
 
-
-
     public Usuario getUsuarioActual(String email) {
         return userRepository.findByEmailUsuario(email).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
     public String forgotPassword(String email) {
-        // buscar al usuario por email
-        System.out.println("Email del usuario: " + email);
+        System.out.println("Email del usuario: " + email);// buscar al usuario por email
         Usuario usuario = userRepository.findByEmailUsuario(email).orElseThrow(() -> new RuntimeException("No se encontró ningún usuario con este email"));
         String token = UUID.randomUUID().toString();// Generar un token único
         passwordResetService.createResetTokenForUser(usuario, token); // Guardar el token en la base de datos

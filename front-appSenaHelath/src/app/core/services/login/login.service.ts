@@ -25,7 +25,6 @@ export class LoginService {
  
   }
 
-  //obtener el rol
   getRole() {
     const token = sessionStorage.getItem('token');
     if (token) {
@@ -34,21 +33,24 @@ export class LoginService {
     }
   }
 
+  recoverPassword(email: string): Observable<any> { //TODO: metodo para recuperar contraseña
+    return this.http.post<any>(environment.urlHost+"auth/recover-password", {email}).pipe(
+      catchError(this.handleError)
+    );
+  }
 
   login(credentials: LoginRequest): Observable<any> {
     return this.http.post<any>(environment.urlHost+"auth/login",credentials).pipe(
       tap( (userData) => {//si todo sale bien encadeno una serie de operaciones con tap
         console.log('Token recibido del backend:', userData.token);
         sessionStorage.setItem("token", userData.token);//guarda el token en el sessionStorage
-        this.currentUserData.next(userData.token);
+        this.currentUserData.next(userData.token);// emite el token al observable
         this.currentUserLoginOn.next(true);
-
       }),
       map((userData)=> userData),//transforma el objeto y devuelve el token
       catchError(this.handleError)
     );
   }
-
 
 
   private handleError(error: HttpErrorResponse) {

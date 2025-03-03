@@ -31,12 +31,6 @@
           <span> y confirmas que has entendido la </span>
           <a href="#" class="enlace">Política de privacidad</a>.
         </div>
-      
-        <!-- Google Sign In Button -->
-        <!-- <button class="btn btn-light mb-4 d-flex align-items-center justify-content-center gap-2 w-100">
-          <img src="../../../../assets/gogle.png" alt="Google" width="20" />
-          Usar Google
-        </button> -->
 
         <!-- Login Form -->
         <form [formGroup]="loginForm">
@@ -48,20 +42,19 @@
               class="form-control form-control-lg"
               id="exampleInputEmail"
               aria-describedby="emailHelp"
+              [(ngModel)] ="correoIngresado"
             />
           </div>
 
           <div
             *ngIf="email.invalid && (email.dirty || email.touched)"
-            class="error-container "
-          >
+            class="error-container ">
             <div *ngIf="email.errors?.['required']">
               El Email es requerido.
             </div>
             <div *ngIf="email.errors ?.['email'] || email.errors ?.['pattern']">
               El Email debe tener un formato válido.
             </div>
-
           </div>
 
           <div >
@@ -74,20 +67,20 @@
                 [type]="showPassword ? 'text' : 'password'"
                 class="form-control  "
                 id="exampleInputPassword"
+                [(ngModel)]="contrasenaIngresada"
               />
 
               <button
                 class="btn btn-outline-secondary "
                 type="button"
-                (click)="togglePassword()"
-              >
+                (click)="togglePassword()">
                 <i [class]="showPassword ? 'bi bi-eye-slash' : 'bi bi-eye'"></i>
               </button>
+
             </div>
               <div
                 *ngIf="password.invalid && (password.dirty || password.touched)"
-                class="error-container "
-              >
+                class="error-container ">
                 <div *ngIf="password.errors?.['required']">
                   El Password es requerido.
                 </div>
@@ -96,21 +89,23 @@
                 </div>
               </div>
 
-           
           </div>
           <div class="text-end  mt-4 mb-2">
-            <a (click)="mostrarModal()"  class="enlace" >¿Has olvidado tu contraseña?</a>
+            <a (click)="abrirModalDesdeLogin()"  class="enlace" >¿Has olvidado tu contraseña?</a>
           </div>
+          <!-- Modal dentro de recuperar-contrasena -->
+          <app-recuperar-contrasena (modalAbierto)="mostrarModal()"></app-recuperar-contrasena>
+
           <div class="text-end mb-2">
             <span>¿Es tu primera vez en HealthU? </span>
             <a href="#" class="enlace">Regístrate</a>
           </div>
-          <!-- </div> -->
+   
           <button
             type="submit"
             (click)="login()"
             class="btn btn-success mb-4 w-100"
-          >
+            [disabled]="contrasenaIngresada.length < 3 || correoIngresado.length < 11">
             Iniciar Sesión
           </button>
         </form>
@@ -119,22 +114,4 @@
   </div>
 </div>
 
-<!-- Modal -->
-<div class="modal fade" id="modalRecuperar" tabindex="-1" aria-labelledby="modalRecuperarLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content bg-white text-black">
-      <div class="modal-header border-0">
-        <h5 class="modal-title fw-bold" id="modalRecuperarLabel">Restablecer tu contraseña</h5>
-        <button type="button" class="btn-close btn-close-black" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center">
-        <p class="mb-3">
-          Introduce tu dirección de correo electrónico o nombre de usuario y te enviaremos un enlace para que restablezcas la contraseña.
-        </p>
-        <input type="email" class="form-control bg-white text-black rounded-pill p-3 border-1" placeholder="Correo electrónico o nombre de usuario *">
-        <button class="btn btn-primary w-100 mt-3 rounded-pill" disabled>Restablecer contraseña</button>
-        <a href="#" class="d-block mt-3 text-primary">¿Necesitas ayuda?</a>
-      </div>
-    </div>
-  </div>
-</div>
+
