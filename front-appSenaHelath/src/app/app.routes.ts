@@ -19,10 +19,10 @@ export const routes: Routes = [
         component: LoginComponent
     },
     {
-        path: 'inicio-super', 
+        path: 'inicio-super', //dashboard para superusuario
         component: DashboardSuperusuarioComponent,
         canActivate: [authGuard, roleGuard],
-        data: {role: 'ROLE_Superusuario'}
+        data: {role: 'ROLE_Superusuario'}//agregar el rol requerido
     },
     {path: '**', redirectTo: 'iniciar-sesion' },
 ];

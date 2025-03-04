@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class PasswordResetToken {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)                                                                                                                                                 
     @Column(name = "id_token")
     private Long id;
 
@@ -29,6 +29,9 @@ public class PasswordResetToken {
     @Column(name = "fecha_expiracion")
     private LocalDateTime expiryDate;
 
-    public PasswordResetToken(String token, Usuario usuario, LocalDateTime localDateTime) {
-    }
+//    public PasswordResetToken(String token, Usuario usuario, LocalDateTime localDateTime) {
+//        this.token = token;
+//        this.usuario = usuario;
+//        this.expiryDate = expiryDate;
+//    }
 }

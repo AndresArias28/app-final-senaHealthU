@@ -44,9 +44,9 @@ public class AuthServiceImpl implements  AuthService {
             );
             //recuperar el usuario de la BD
             UserDetails userDetails = userRepository.findByEmailUsuario(rq.getEmailUsuario()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-            HashMap<String, Object> aux = new HashMap<>(); //crear token con el usuario
-            aux.put("sub", rq.getEmailUsuario());//agregar el email del usuario al token
-            String token = jwtService.generateToken(aux, userDetails);
+            HashMap<String, Object> tokenExtraClaim = new HashMap<>(); //crear token con el usuario
+            tokenExtraClaim.put("sub", rq.getEmailUsuario());//agregar el email del usuario al token
+            String token = jwtService.generateToken(tokenExtraClaim, userDetails);
             System.out.println("Token generado: " + token);
             return AuthResponse.builder().token(token).build();//crear la respuesta con el token
         } catch (Exception e) {
@@ -86,6 +86,7 @@ public class AuthServiceImpl implements  AuthService {
         // enviar correo electrónico con el token
         String resetLink = "http://localhost:6090/auth/reset-password?token=" + token;
         sendPasswordResetEmail(usuario.getEmailUsuario(), resetLink);
+
         return "Se ha enviado un correo con instrucciones para restablecer tu contraseña.";
     }
 

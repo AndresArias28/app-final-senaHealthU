@@ -10,7 +10,7 @@ import {jwtDecode} from 'jwt-decode';
 })
 export class LoginService {
 
-  currentUserLoginOn = new BehaviorSubject<boolean>(false);
+  currentUserLoginOn = new BehaviorSubject<boolean>(false);//observable para el estado del login
   currentUserData = new BehaviorSubject<String>("");
 
   private dataUrl = 'assets/data.json';
@@ -33,8 +33,11 @@ export class LoginService {
     }
   }
 
-  recoverPassword(email: string): Observable<any> { //TODO: metodo para recuperar contraseña
-    return this.http.post<any>(environment.urlHost+"auth/recover-password", {email}).pipe(
+  recoverPassword(emailUsuario: string): Observable<any> {
+    return this.http.post<any>(environment.urlHost+"auth/forgot-password", {emailUsuario}).pipe(
+      tap( (response) => {
+        console.log('datos recividos del back:', response);
+      }),
       catchError(this.handleError)
     );
   }
@@ -52,8 +55,10 @@ export class LoginService {
     );
   }
 
-
   private handleError(error: HttpErrorResponse) {
+    if (error.status === 200) {
+      console.log(error.error); // Retorna la respuesta como exitosa
+    }
     if (error.status === 0) {
       console.error('Se ha producio un error ', error.error);
     } else {

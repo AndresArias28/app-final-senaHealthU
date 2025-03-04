@@ -19,8 +19,6 @@ declare var window: any;
 })
 
 export class LoginComponent implements OnInit {
-
- 
   
   @ViewChild(RecuperarContrasenaComponent) recuperarComponent!: RecuperarContrasenaComponent;
  // private modalInstance!: new  Modal | null; 
@@ -75,7 +73,7 @@ export class LoginComponent implements OnInit {
         },
         complete: () => {
           console.log('complete');
-          this.loginForm.reset();
+          this.loginForm.reset();// resetea el formulario para  que no se muestre el error
         }
       })
 

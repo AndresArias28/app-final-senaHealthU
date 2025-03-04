@@ -15,9 +15,9 @@
         class="form-control bg-white text-dark rounded-pill p-3 border-1"
         placeholder="Correo electrónico*"
         [(ngModel)]="correoIngresado"
-        (input)="validarTextoIngresado()"
+        
       />
-        <button (click)="recoverPassword()" class="btn btn-success w-100 mt-3 rounded-pill" [disabled]="correoIngresado.length < 3">Restablecer contraseña</button>
+        <button (click)="recoverPassword()" class="btn btn-success w-100 mt-3 rounded-pill" [disabled]="correoIngresado.length < 5">Restablecer contraseña</button>
 
 
         <a href="#" class="d-block mt-3 text-primary">¿Necesitas ayuda?</a>
