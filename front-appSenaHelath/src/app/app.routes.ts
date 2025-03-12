@@ -4,6 +4,8 @@ import { LoginComponent } from './feature/auth/login/login.component';
 import { authGuard } from './core/guards/auth.guard';
 import { DashboardSuperusuarioComponent } from './feature/pages/dashboard-superusuario/dashboard-superusuario.component';
 import { roleGuard } from './core/guards/role.guard';
+import { Component } from '@angular/core';
+import { RegisterComponent } from './feature/auth/register/register.component';
 
 export const routes: Routes = [
     {path: '', redirectTo: 'iniciar-sesion', pathMatch: 'full'},
@@ -21,8 +23,14 @@ export const routes: Routes = [
     {
         path: 'inicio-super', //dashboard para superusuario
         component: DashboardSuperusuarioComponent,
-        canActivate: [authGuard, roleGuard],
+        // canActivate: [authGuard, roleGuard],
         data: {role: 'ROLE_Superusuario'}//agregar el rol requerido
+    },
+    {
+        path : 'register-admin',
+        component: RegisterComponent,
+        //canActivate: [authGuard, roleGuard],
+        //data: {role: 'ROLE_Superusuario'}
     },
     {path: '**', redirectTo: 'iniciar-sesion' },
 ];

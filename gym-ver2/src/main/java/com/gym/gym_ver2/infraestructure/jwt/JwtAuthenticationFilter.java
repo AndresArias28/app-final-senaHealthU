@@ -65,7 +65,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     String roles = claims.get("rol", String.class); // Obtener roles como String
                     // Convertir roles en una lista de autoridades
                     List<GrantedAuthority> authorities = (roles != null) ? Collections.singletonList(new SimpleGrantedAuthority(roles)) : List.of();
-                    System.out.println("Roles del token fitro: " + roles);
+                    System.out.println("Roles del token: " + roles);
                     System.out.println("Autoridades generadas filtro: " + authorities);
                     // Validar la url de la petición
                     if (request.getRequestURI().startsWith("/user/obtenereUsarios")) {
@@ -86,22 +86,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                             userDetails, null, authorities);
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     System.out.println("Autenticación establecida en el SecurityContextHolder");
-                    // Validar que el usuario tenga el rol "Superusuario"**
-//                    boolean esSuperusuario = authorities.stream()
-//                            .anyMatch(auth -> auth.getAuthority().equals("ROLE_Superusuario"));
-//
-//                    if (!esSuperusuario) {
-//                        System.err.println("Acceso denegado: No es Superusuario");
-//                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Acceso denegado: Se requiere rol de Superusuario");
-//                        return;
-//                    }
-                    // Configurar la autenticación en el contexto de seguridad
-
-                    // authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-
-
                 }
-
             }
         } catch (io.jsonwebtoken.ExpiredJwtException e) {
             System.err.println("El token ha expirado: " + e.getMessage());

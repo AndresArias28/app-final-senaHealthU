@@ -5,10 +5,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { LoginService } from '../../../core/services/login/login.service';
 import { LoginRequest } from '../../../shared/models/loginRequest';
-import { jwtDecode } from 'jwt-decode';
 import { toast } from 'ngx-sonner';
 import { RecuperarContrasenaComponent } from '../recuperar-contrasena/recuperar-contrasena.component';
-import { bootstrapApplication } from '@angular/platform-browser';
 declare var window: any;
 
 @Component({
@@ -21,7 +19,7 @@ declare var window: any;
 export class LoginComponent implements OnInit {
   
   @ViewChild(RecuperarContrasenaComponent) recuperarComponent!: RecuperarContrasenaComponent;
- // private modalInstance!: new  Modal | null; 
+  // private modalInstance!: new  Modal | null; 
   contrasenaIngresada: string = '';
   loginError: string = '';
   loginForm;
@@ -34,8 +32,7 @@ export class LoginComponent implements OnInit {
     private router: Router, 
     private loginService: LoginService,
     private ngZone: NgZone 
-  ) {
-    //validaciones del formulario reactivo
+  ) { //validaciones del formulario reactivo
     this.loginForm = this.formBuilder.group({
       emailUsuario: ['', [Validators.required, Validators.email, Validators.pattern('^[a-z0-9._%+-]+@[a-z0-9.-]+\\.[a-z]{2,4}$') ]],
       contrasenaUsuario: ['', [Validators.required, Validators.minLength(6)]],
@@ -50,7 +47,6 @@ export class LoginComponent implements OnInit {
     if (this.loginForm.valid) {//validar el formulario
       this.loginService.login(this.loginForm.value as LoginRequest).subscribe({//
         next: (data) => {
-
           const rol = this.loginService.getRole();
           console.log('Rol obtenido:', rol);
 
@@ -64,7 +60,6 @@ export class LoginComponent implements OnInit {
             toast.error('rol de usuario no autorizado');
             this.router.navigate(['/iniciar-sesion']);
           } 
-       
         },
         error: (error) => {
           console.log(error.message);
